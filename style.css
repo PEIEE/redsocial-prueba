@@ -2,7 +2,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background: linear-gradient(135deg, #2c2f3d, #4a4063);
+    background: linear-gradient(135deg, #1e2a44 0%, #141b29 100%);
     color: #fff;
     overflow-x: hidden;
 }
@@ -302,14 +302,27 @@ nav a:hover {
     width: auto;
 }
 
-.landing-header nav a {
+.landing-header .menu-toggle {
+    display: none;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.landing-header .nav-menu {
+    display: flex;
+}
+
+.landing-header .nav-menu a {
     color: white;
     margin: 0 1rem;
     text-decoration: none;
     font-size: 1rem;
 }
 
-.landing-header nav a:hover {
+.landing-header .nav-menu a:hover {
     text-decoration: underline;
 }
 
@@ -564,28 +577,45 @@ nav a:hover {
 /* Media queries para móviles */
 @media (max-width: 640px) {
     .landing-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
         padding: 1rem;
+        position: relative;
     }
 
     .landing-header .logo img {
         height: 50px;
     }
 
-    .landing-header nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
+    .landing-header .menu-toggle {
+        display: block;
+        order: 2;
     }
 
-    .landing-header nav a {
-        margin: 0 0.5rem;
-        font-size: 0.9rem;
+    .landing-header .nav-menu {
+        display: none;
+        flex-direction: column;
+        width: 100%;
+        background: rgba(47, 49, 54, 0.9);
+        position: absolute;
+        top: 100%;
+        left: 0;
+        padding: 1rem;
+        z-index: 1000;
+    }
+
+    .landing-header .nav-menu.active {
+        display: flex;
+    }
+
+    .landing-header .nav-menu a {
+        margin: 0.5rem 0;
+        font-size: 1rem;
+        text-align: center;
     }
 
     .landing-header .open-btn {
+        order: 3;
         padding: 0.4rem 0.8rem;
         font-size: 0.9rem;
     }
