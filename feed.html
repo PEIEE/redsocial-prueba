@@ -3,89 +3,112 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Social Prueba - Inicio</title>
+    <title>Red Social Prueba - Feed</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <div class="logo">RedSocial🎮</div>
-        <nav>
-            <a href="#chats" class="nav-link" onclick="showSection('chats')">Chats</a>
-            <a href="#reels" class="nav-link" onclick="showSection('reels')">Reels</a>
-            <a href="#" class="btn" id="logout-btn">Cerrar Sesión</a>
-        </nav>
-    </header>
-    <main>
-        <div id="welcome" class="section active">
-            <div class="welcome-container">
-                <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
-                <p>Estás dentro de tu comunidad gamer. Explora chats, disfruta de reels y conecta con amigos.</p>
-                <div class="welcome-buttons">
-                    <a href="#chats" class="btn primary" onclick="showSection('chats')">Ir a Chats</a>
-                    <a href="#reels" class="btn primary" onclick="showSection('reels')">Ver Reels</a>
+    <div class="app-container">
+        <!-- Sidebar izquierda -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>Comunidades</h2>
+                <button class="sidebar-btn">Nueva</button>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Busca en ChatLax...">
+            </div>
+            <ul class="sidebar-menu">
+                <li><button class="menu-item active"><span>🔍</span> Activos</button></li>
+                <li><button class="menu-item"><span>📱</span> Personalización</button></li>
+                <li><button class="menu-item"><span>👤</span> Prueba1</button></li>
+            </ul>
+        </aside>
+
+        <!-- Área principal -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="menu-toggle">☰</button>
+                    <h2>Canal: Personal1</h2>
+                </div>
+                <div class="header-center">
+                    <button class="header-btn active">💬 Chat</button>
+                    <button class="header-btn">📱 Feed</button>
+                </div>
+                <div class="header-right">
+                    <button class="menu-toggle">≡</button>
+                </div>
+            </header>
+
+            <!-- Lista de chats -->
+            <div class="chat-list">
+                <div class="chat-item">
+                    <div class="chat-avatar green"></div>
+                    <div class="chat-info">
+                        <h3>Personal1 voz</h3>
+                        <p>En un canal de voz</p>
+                    </div>
+                    <div class="chat-time">18:44</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar blue"></div>
+                    <div class="chat-info">
+                        <h3>Hola1</h3>
+                        <p>Hola</p>
+                    </div>
+                    <div class="chat-time">18:44</div>
+                </div>
+                <div class="chat-item">
+                    <div class="chat-avatar green"></div>
+                    <div class="chat-info">
+                        <h3>Patata</h3>
+                        <p>Hola</p>
+                    </div>
+                    <div class="chat-time">18:44</div>
                 </div>
             </div>
-        </div>
-        <div id="chats" class="section">
-            <div class="feed-container">
-                <h1>Chats - Como Discord</h1>
-                <div class="chat-list">
-                    <div class="chat-item">
-                        <h3>Servidor General</h3>
-                        <p>¡Bienvenido al chat principal!</p>
-                    </div>
-                    <div class="chat-item">
-                        <h3>Amigos</h3>
-                        <p>Conversaciones privadas con amigos.</p>
-                    </div>
-                    <div class="chat-item">
-                        <h3>Juegos</h3>
-                        <p>Discusiones sobre juegos y streams.</p>
-                    </div>
+
+            <!-- Panel de personalización (derecho) -->
+            <aside class="personalization-panel">
+                <h2>Personalización</h2>
+                <div class="personalization-section">
+                    <label>Nombre de usuario</label>
+                    <input type="text" value="Prueba1">
                 </div>
-            </div>
-        </div>
-        <div id="reels" class="section">
-            <div class="reels-container">
-                <h1>Reels - Como TikTok</h1>
-                <div class="reels-wrapper">
-                    <div class="reel-item" data-index="0">
-                        <video controls autoplay muted loop class="reel-video">
-                            <source src="https://via.placeholder.com/360x640.mp4?text=Reel+1" type="video/mp4">
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="reel-controls">
-                            <button class="reel-button" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
-                            <button class="reel-button" onclick="toggleFollow(this)">Seguir</button>
-                            <button class="reel-button" onclick="shareReel(this)">Compartir</button>
+                <div class="personalization-section">
+                    <label>Pronombres</label>
+                    <input type="text" placeholder="Añade tus pronombres">
+                </div>
+                <div class="personalization-section">
+                    <label>Avatar</label>
+                    <div class="avatar-preview">
+                        <img src="https://via.placeholder.com/100?text=Avatar" alt="Avatar">
+                        <div class="avatar-actions">
+                            <button>Cambiar avatar</button>
+                            <button>Eliminar</button>
                         </div>
-                        <p class="reel-caption">Reel de prueba 1</p>
-                    </div>
-                    <div class="reel-item" data-index="1">
-                        <video controls autoplay muted loop class="reel-video">
-                            <source src="https://via.placeholder.com/360x640.mp4?text=Reel+2" type="video/mp4">
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="reel-controls">
-                            <button class="reel-button" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
-                            <button class="reel-button" onclick="toggleFollow(this)">Seguir</button>
-                            <button class="reel-button" onclick="shareReel(this)">Compartir</button>
-                        </div>
-                        <p class="reel-caption">Reel de prueba 2</p>
                     </div>
                 </div>
-                <button class="nav-button" onclick="navigateReel(-1)">⬅️ Anterior</button>
-                <button class="nav-button" onclick="navigateReel(1)">Siguiente ➡️</button>
+                <div class="avatar-preview-large">
+                    <h3>Vista previa</h3>
+                    <div class="preview-avatar">
+                        <img src="https://via.placeholder.com/200?text=Prueba1" alt="Preview">
+                    </div>
+                </div>
+            </aside>
+        </main>
+
+        <!-- Barra inferior -->
+        <footer class="chat-footer">
+            <button id="logout-btn" class="logout-btn">Cerrar Sesión</button>
+            <div class="message-input">
+                <input type="text" placeholder="Escribe un mensaje...">
+                <button>➤</button>
             </div>
-        </div>
-        <div class="decorations">
-            <div class="circle"></div>
-            <div class="character"></div>
-        </div>
-    </main>
+        </footer>
+    </div>
+
     <script type="module" src="feed.js"></script>
-    <script src="feed-navigation.js"></script>
-    <script src="reel-interactions.js"></script>
-    <script src="feed-welcome.js"></script>
 </body>
 </html>
