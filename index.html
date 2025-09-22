@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Social Prueba</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="login-form" class="container">
+        <h1>Bienvenido a la Red Social Prueba</h1>
+        <form id="auth-form">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit" id="submit-btn">Iniciar Sesión</button>
+            <button type="button" id="toggle-registro">Registrarse</button>
+        </form>
+        <p id="error-msg" style="color: red;"></p>
+    </div>
+
+    <div id="feed" class="container hidden">
+        <h1>Feed - ¡Bienvenido!</h1>
+        <p>Aquí irían los posts. Por ahora, es de prueba.</p>
+        <button id="logout-btn">Cerrar Sesión</button>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="script.js"></script>
+</body>
+</html>
