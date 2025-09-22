@@ -1,7 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, orderBy, doc, setDoc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { getStorage, ref, uploadBytesResumable, getDownloadURL } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js';
 
 // Config de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -17,7 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app); // Inicializar Firestore
-const storage = getStorage(app); // Inicializar Storage
 
 let currentUser = null;
 let currentChatId = null;
@@ -36,11 +34,10 @@ const chatTitle = document.getElementById('chat-title');
 const messagesContainer = document.getElementById('messages-container');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
-const profileBtn = document.getElementById('profile-btn');
 
 // Verificar que los elementos existan
-if (!logoutBtn || !profileBtn || !profilePanel) {
-    console.error('Faltan elementos en feed.html. Verifica los IDs: logout-btn, profile-btn, profile-panel.');
+if (!logoutBtn || !userNameSpan || !userAvatar || !profilePanel) {
+    console.error('Faltan elementos en feed.html. Verifica los IDs: logout-btn, user-name, user-avatar, profile-panel.');
 }
 
 // Verificar estado de autenticación
@@ -80,6 +77,29 @@ async function loadUserProfile(user) {
     }
 }
 
+// Función para subir avatar a Cloudinary
+async function uploadAvatar(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'avatar_upload'); // Reemplaza con tu preset
+
+    try {
+        const response = await fetch(`https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload`, {
+            method: 'POST',
+            body: formData
+        });
+        const data = await response.json();
+        if (data.secure_url) {
+            return data.secure_url; // URL optimizada para <img src>
+        } else {
+            throw new Error('Error al subir la imagen a Cloudinary');
+        }
+    } catch (error) {
+        console.error('Error en uploadAvatar:', error.message);
+        return 'default-avatar.png'; // Fallback
+    }
+}
+
 // Función para guardar el perfil
 saveProfileBtn.addEventListener('click', async () => {
     const displayName = displayNameInput.value.trim();
@@ -95,27 +115,17 @@ saveProfileBtn.addEventListener('click', async () => {
     }
 });
 
-// Función para subir avatar a Storage
-async function uploadAvatar(file) {
-    const storageRef = ref(storage, `avatars/${currentUser.uid}/${file.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file);
-    return new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', () => {}, reject, async () => {
-            const url = await getDownloadURL(uploadTask.snapshot.ref);
-            resolve(url);
-        });
-    });
-}
-
-// Abrir/cerrar panel de perfil
-profileBtn.addEventListener('click', () => {
-    profilePanel.classList.toggle('hidden');
-    if (!profilePanel.classList.contains('hidden')) {
-        chatPanel.classList.add('hidden'); // Cerrar chat si está abierto
-        if (unsubscribeMessages) {
-            unsubscribeMessages(); // Limpiar listener de chat
+// Abrir/cerrar panel de perfil al clicar en nombre o avatar
+[userNameSpan, userAvatar].forEach(element => {
+    element.addEventListener('click', () => {
+        profilePanel.classList.toggle('hidden');
+        if (!profilePanel.classList.contains('hidden')) {
+            chatPanel.classList.add('hidden'); // Cerrar chat si está abierto
+            if (unsubscribeMessages) {
+                unsubscribeMessages(); // Limpiar listener de chat
+            }
         }
-    }
+    });
 });
 
 // Función para seleccionar un chat (llamada desde HTML onclick)
