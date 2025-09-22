@@ -36,7 +36,16 @@
         <section class="content">
             <div class="welcome-section">
                 <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
+                <img id="user-avatar" src="default-avatar.png" alt="Avatar" class="user-avatar">
                 <p>Explora tu comunidad gamer y disfruta del contenido.</p>
+            </div>
+            <div id="profile-panel" class="profile-panel hidden">
+                <h3>Personalizar Perfil</h3>
+                <label for="display-name">Nombre de Usuario:</label>
+                <input type="text" id="display-name" placeholder="Tu nombre">
+                <label for="avatar-upload">Avatar:</label>
+                <input type="file" id="avatar-upload" accept="image/*">
+                <button id="save-profile">Guardar</button>
             </div>
             <div class="reels-section">
                 <h2>Reels</h2>
