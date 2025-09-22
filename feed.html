@@ -11,7 +11,7 @@
         <div class="logo">RedSocial🎮</div>
         <div class="icons">
             <button id="notifications-btn">🔔</button>
-            <button id="profile-btn">👤</button>
+            <button id="profile-btn" disabled>👤</button>
             <button id="logout-btn">Cerrar Sesión</button>
         </div>
     </header>
@@ -35,8 +35,8 @@
         </aside>
         <section class="content">
             <div class="welcome-section">
-                <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
-                <img id="user-avatar" src="default-avatar.png" alt="Avatar" class="user-avatar">
+                <h1>¡Bienvenido, <span id="user-name" class="clickable">Usuario</span>!</h1>
+                <img id="user-avatar" src="default-avatar.png" alt="Avatar" class="user-avatar clickable">
                 <p>Explora tu comunidad gamer y disfruta del contenido.</p>
             </div>
             <div id="profile-panel" class="profile-panel hidden">
