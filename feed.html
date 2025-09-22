@@ -3,83 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Social Prueba - Inicio</title>
+    <title>RedSocial🎮 - Feed</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <div class="logo">RedSocial🎮</div>
-        <nav>
-            <a href="#" class="btn" id="notifications-btn">🔔</a>
-            <a href="#" class="btn" id="profile-btn">👤</a>
-            <a href="#" class="btn" id="logout-btn">Cerrar Sesión</a>
-        </nav>
+        <div class="icons">
+            <button id="notifications-btn">🔔</button>
+            <button id="profile-btn">👤</button>
+            <button id="logout-btn">Cerrar Sesión</button>
+        </div>
     </header>
-    <main>
-        <div class="dashboard">
-            <aside class="sidebar">
-                <h2>Chats</h2>
-                <div class="chat-list">
-                    <div class="chat-item" onclick="selectChat(this)">
-                        <h3>Servidor General</h3>
-                        <p>Activo ahora</p>
-                    </div>
-                    <div class="chat-item" onclick="selectChat(this)">
-                        <h3>Amigos</h3>
-                        <p>3 nuevos mensajes</p>
-                    </div>
-                    <div class="chat-item" onclick="selectChat(this)">
-                        <h3>Juegos</h3>
-                        <p>En vivo</p>
-                    </div>
+    <main class="dashboard">
+        <aside class="sidebar">
+            <h2>Chats</h2>
+            <div class="chat-list">
+                <div class="chat-item" onclick="selectChat(this)">
+                    <h3>Servidor General</h3>
+                    <p>Activo ahora</p>
                 </div>
-            </aside>
-            <section class="content">
-                <div class="welcome-section">
-                    <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
-                    <p>Explora tu comunidad gamer y disfruta del contenido.</p>
+                <div class="chat-item" onclick="selectChat(this)">
+                    <h3>Amigos</h3>
+                    <p>3 nuevos mensajes</p>
                 </div>
-                <div class="reels-section">
-                    <h2>Reels</h2>
-                    <div class="reels-wrapper">
-                        <div class="reel-item" data-index="0">
-                            <video controls autoplay muted loop class="reel-video">
-                                <source src="https://via.placeholder.com/360x640.mp4?text=Reel+1" type="video/mp4">
-                                Tu navegador no soporta videos.
-                            </video>
-                            <div class="reel-controls">
-                                <button class="reel-button" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
-                                <button class="reel-button" onclick="toggleFollow(this)">Seguir</button>
-                                <button class="reel-button" onclick="shareReel(this)">Compartir</button>
-                            </div>
-                            <p class="reel-caption">Reel de prueba 1</p>
+                <div class="chat-item" onclick="selectChat(this)">
+                    <h3>Juegos</h3>
+                    <p>En vivo</p>
+                </div>
+            </div>
+        </aside>
+        <section class="content">
+            <div class="welcome-section">
+                <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
+                <p>Explora tu comunidad gamer y disfruta del contenido.</p>
+            </div>
+            <div class="reels-section">
+                <h2>Reels</h2>
+                <div class="reels-wrapper">
+                    <div class="reel-item active">
+                        <video src="reel1.mp4" loop>
+                            Tu navegador no soporta videos.
+                        </video>
+                        <div class="reel-controls">
+                            <button class="reel-button like-btn" onclick="toggleLike(this)">
+                                ❤️ <span class="like-count">0</span>
+                            </button>
+                            <button class="reel-button follow-btn" onclick="toggleFollow(this)">Seguir</button>
+                            <button class="reel-button share-btn" onclick="shareReel(this)">Compartir</button>
                         </div>
-                        <div class="reel-item" data-index="1">
-                            <video controls autoplay muted loop class="reel-video">
-                                <source src="https://via.placeholder.com/360x640.mp4?text=Reel+2" type="video/mp4">
-                                Tu navegador no soporta videos.
-                            </video>
-                            <div class="reel-controls">
-                                <button class="reel-button" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
-                                <button class="reel-button" onclick="toggleFollow(this)">Seguir</button>
-                                <button class="reel-button" onclick="shareReel(this)">Compartir</button>
-                            </div>
-                            <p class="reel-caption">Reel de prueba 2</p>
-                        </div>
+                        <p class="reel-caption">Reel de prueba 1</p>
                     </div>
-                    <button class="nav-button" onclick="navigateReel(-1)">⬅️ Anterior</button>
-                    <button class="nav-button" onclick="navigateReel(1)">Siguiente ➡️</button>
+                    <div class="reel-item">
+                        <video src="reel2.mp4" loop>
+                            Tu navegador no soporta videos.
+                        </video>
+                        <div class="reel-controls">
+                            <button class="reel-button like-btn" onclick="toggleLike(this)">
+                                ❤️ <span class="like-count">0</span>
+                            </button>
+                            <button class="reel-button follow-btn" onclick="toggleFollow(this)">Seguir</button>
+                            <button class="reel-button share-btn" onclick="shareReel(this)">Compartir</button>
+                        </div>
+                        <p class="reel-caption">Reel de prueba 2</p>
+                    </div>
                 </div>
-            </section>
-        </div>
-        <div class="decorations">
-            <div class="circle"></div>
-            <div class="character"></div>
-        </div>
+                <button class="nav-button prev-btn" onclick="navigateReel(-1)">⬅️ Anterior</button>
+                <button class="nav-button next-btn" onclick="navigateReel(1)">Siguiente ➡️</button>
+            </div>
+        </section>
     </main>
     <script type="module" src="feed.js"></script>
     <script src="reel-interactions.js"></script>
-    <script src="feed-welcome.js"></script>
-    <script src="feed-dashboard.js"></script>
 </body>
 </html>
