@@ -17,20 +17,17 @@
     </header>
     <main class="dashboard">
         <aside class="sidebar">
-            <h2>Chats</h2>
-            <div class="chat-list">
-                <div class="chat-item" data-chat-id="general" onclick="selectChat(this)">
-                    <h3>Servidor General</h3>
-                    <p>Activo ahora</p>
-                </div>
-                <div class="chat-item" data-chat-id="amigos" onclick="selectChat(this)">
-                    <h3>Amigos</h3>
-                    <p>3 nuevos mensajes</p>
-                </div>
-                <div class="chat-item" data-chat-id="juegos" onclick="selectChat(this)">
-                    <h3>Juegos</h3>
-                    <p>En vivo</p>
-                </div>
+            <h2>Amigos</h2>
+            <div class="search-section">
+                <input type="text" id="user-search" placeholder="Buscar usuarios...">
+            </div>
+            <div id="search-results" class="search-results hidden"></div>
+            <div id="friends-list" class="friends-list">
+                <!-- Amigos se cargan dinámicamente -->
+            </div>
+            <div class="requests-section hidden" id="requests-section">
+                <h3>Solicitudes Pendientes</h3>
+                <div id="requests-list"></div>
             </div>
         </aside>
         <section class="content">
@@ -46,6 +43,10 @@
                 <label for="avatar-upload">Avatar:</label>
                 <input type="file" id="avatar-upload" accept="image/*">
                 <button id="save-profile">Guardar</button>
+                <div class="requests-section">
+                    <h4>Solicitudes Pendientes</h4>
+                    <div id="requests-list"></div>
+                </div>
             </div>
             <div class="reels-section">
                 <h2>Reels</h2>
