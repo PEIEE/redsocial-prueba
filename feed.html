@@ -7,12 +7,26 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="feed" class="container">
-        <h1>Hola mundo, esto es una prueba</h1>
-        <button id="logout-btn">Cerrar Sesión</button>
-    </div>
-
-    <!-- Firebase SDK -->
+    <header>
+        <div class="logo">RedSocial🎮</div>
+        <nav>
+            <a href="#">Perfil</a>
+            <a href="#">Amigos</a>
+            <a href="#" class="btn" id="logout-btn">Cerrar Sesión</a>
+        </nav>
+    </header>
+    <main>
+        <div class="feed-container">
+            <h1>¡BIENVENIDO A TU FEED!</h1>
+            <div class="feed-content">
+                <p>Hola mundo, esto es una prueba</p>
+            </div>
+        </div>
+        <div class="decorations">
+            <div class="circle"></div>
+            <div class="character"></div>
+        </div>
+    </main>
     <script type="module" src="feed.js"></script>
 </body>
 </html>
