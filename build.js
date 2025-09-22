@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-// Leer las variables de entorno de Netlify
+// Leer las variables de entorno de Netlify 
 const env = {
     FIREBASE_API_KEY: process.env.FIREBASE_API_KEY,
     FIREBASE_AUTH_DOMAIN: process.env.FIREBASE_AUTH_DOMAIN,
