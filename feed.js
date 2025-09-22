@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 // Config de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -15,70 +15,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Elementos DOM (ajustados para login.html)
-const authForm = document.getElementById('auth-form');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const submitBtn = document.getElementById('submit-btn');
-const toggleBtn = document.getElementById('toggle-registro');
-const errorMsg = document.getElementById('error-msg');
-const successMsg = document.getElementById('success-msg');
+// Elementos DOM
+const logoutBtn = document.getElementById('logout-btn');
 
-// Verificar que los elementos existan
-if (!authForm || !emailInput || !passwordInput || !submitBtn || !toggleBtn || !errorMsg || !successMsg) {
-    console.error('Uno o más elementos del DOM no se encontraron. Verifica los IDs en login.html.');
-    throw new Error('Elementos del DOM faltantes');
+// Verificar que el elemento exista
+if (!logoutBtn) {
+    console.error('El elemento logout-btn no se encontró. Verifica el ID en feed.html.');
+    throw new Error('Elemento logout-btn faltante');
 }
-
-let isRegistro = false;
-
-// Toggle entre login y registro
-toggleBtn.addEventListener('click', () => {
-    isRegistro = !isRegistro;
-    submitBtn.textContent = isRegistro ? 'Registrarse' : 'Iniciar Sesión';
-    toggleBtn.textContent = isRegistro ? 'Ya tengo cuenta' : 'Registrarse';
-    errorMsg.textContent = '';
-    successMsg.textContent = '';
-});
-
-// Manejar formulario
-authForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = emailInput.value;
-    const password = passwordInput.value;
-    errorMsg.textContent = '';
-    successMsg.textContent = '';
-
-    try {
-        if (isRegistro) {
-            await createUserWithEmailAndPassword(auth, email, password);
-            successMsg.textContent = '¡Registro exitoso! Redirigiendo...';
-        } else {
-            await signInWithEmailAndPassword(auth, email, password);
-            successMsg.textContent = '¡Inicio de sesión exitoso! Redirigiendo...';
-        }
-        // Redirigir a feed.html
-        setTimeout(() => {
-            window.location.href = 'feed.html';
-        }, 1000); // Espera 1 segundo para mostrar el mensaje
-    } catch (error) {
-        let errorMessage = error.message;
-        if (error.code === 'auth/email-already-in-use') {
-            errorMessage = 'El correo ya está registrado. Intenta con otro.';
-        } else if (error.code === 'auth/invalid-email') {
-            errorMessage = 'El correo no es válido.';
-        } else if (error.code === 'auth/weak-password') {
-            errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
-        } else if (error.code === 'auth/invalid-credential') {
-            errorMessage = 'Correo o contraseña incorrectos.';
-        }
-        errorMsg.textContent = errorMessage;
-    }
-});
 
 // Verificar estado de autenticación
 onAuthStateChanged(auth, (user) => {
-    if (user && window.location.pathname !== '/feed.html') {
-        window.location.href = 'feed.html';
+    if (!user) {
+        window.location.href = 'index.html';
+    }
+});
+
+// Logout
+logoutBtn.addEventListener('click', async () => {
+    try {
+        await signOut(auth);
+        window.location.href = 'index.html';
+    } catch (error) {
+        console.error('Error al cerrar sesión:', error.message);
     }
 });
