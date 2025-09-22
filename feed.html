@@ -3,46 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Social Prueba - Feed</title>
+    <title>RedSocial🎮</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-container">
-        <!-- Sidebar izquierda -->
         <aside class="sidebar">
             <div class="sidebar-header">
                 <h2>Comunidades</h2>
                 <button class="sidebar-btn">Nueva</button>
             </div>
             <div class="search-bar">
-                <input type="text" placeholder="Busca en ChatLax...">
+                <input type="text" placeholder="Buscar...">
             </div>
             <ul class="sidebar-menu">
-                <li><button class="menu-item active"><span>🔍</span> Activos</button></li>
-                <li><button class="menu-item"><span>📱</span> Personalización</button></li>
-                <li><button class="menu-item"><span>👤</span> Prueba1</button></li>
+                <li><button class="menu-item active" onclick="window.location.href='feed.html'">🏠 Inicio</button></li>
+                <li><button class="menu-item">🔍 Activos</button></li>
+                <li><button class="menu-item">📱 Personalización</button></li>
+                <li><button class="menu-item">👤 Prueba1</button></li>
             </ul>
         </aside>
-
-        <!-- Área principal -->
         <main class="main-content">
-            <!-- Header -->
             <header class="main-header">
                 <div class="header-left">
                     <button class="menu-toggle">☰</button>
                     <h2>Canal: Personal1</h2>
                 </div>
                 <div class="header-center">
-                    <button class="header-btn active">💬 Chat</button>
-                    <button class="header-btn">📱 Feed</button>
+                    <button class="header-btn">💬 Chat</button>
+                    <button class="header-btn active">📱 Feed</button>
                 </div>
-                <div class="header-right">
-                    <button class="menu-toggle">≡</button>
-                </div>
+                <button class="menu-toggle">≡</button>
             </header>
-
-            <!-- Lista de chats -->
-            <div class="chat-list">
+            <section class="chat-list">
                 <div class="chat-item">
                     <div class="chat-avatar green"></div>
                     <div class="chat-info">
@@ -67,48 +60,44 @@
                     </div>
                     <div class="chat-time">18:44</div>
                 </div>
-            </div>
-
-            <!-- Panel de personalización (derecho) -->
+            </section>
             <aside class="personalization-panel">
                 <h2>Personalización</h2>
                 <div class="personalization-section">
                     <label>Nombre de usuario</label>
-                    <input type="text" value="Prueba1">
+                    <input type="text" placeholder="Usuario">
                 </div>
                 <div class="personalization-section">
                     <label>Pronombres</label>
-                    <input type="text" placeholder="Añade tus pronombres">
+                    <input type="text" placeholder="Pronombres">
                 </div>
                 <div class="personalization-section">
                     <label>Avatar</label>
                     <div class="avatar-preview">
-                        <img src="https://via.placeholder.com/100?text=Avatar" alt="Avatar">
+                        <img src="default-avatar.png" alt="Avatar">
                         <div class="avatar-actions">
                             <button>Cambiar avatar</button>
                             <button>Eliminar</button>
                         </div>
                     </div>
                 </div>
-                <div class="avatar-preview-large">
-                    <h3>Vista previa</h3>
-                    <div class="preview-avatar">
-                        <img src="https://via.placeholder.com/200?text=Prueba1" alt="Preview">
+                <div class="personalization-section">
+                    <label>Vista previa</label>
+                    <div class="avatar-preview-large">
+                        <div class="preview-avatar">
+                            <img src="default-avatar.png" alt="Avatar grande">
+                        </div>
                     </div>
                 </div>
             </aside>
         </main>
-
-        <!-- Barra inferior -->
         <footer class="chat-footer">
-            <button id="logout-btn" class="logout-btn">Cerrar Sesión</button>
+            <button class="logout-btn">Cerrar Sesión</button>
             <div class="message-input">
                 <input type="text" placeholder="Escribe un mensaje...">
                 <button>➤</button>
             </div>
         </footer>
     </div>
-
-    <script type="module" src="feed.js"></script>
 </body>
 </html>
