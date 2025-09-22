@@ -3,36 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatKlax🎮</title>
+    <title>Red Social Prueba - Login</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <header>
-        <nav>
-            <h1>ChatKlax🎮</h1>
-            <ul>
-                <li><a href="#">Descargar</a></li>
-                <li><a href="#">Premium</a></li>
-                <li><a href="#">Descubrir</a></li>
-                <li><a href="#">Seguridad</a></li>
-                <li><a href="#">Soporte</a></li>
-                <li><a href="#">Blog</a></li>
-                <li><a href="#">Carreras</a></li>
-                <li><a href="login.html">Iniciar Sesión</a></li>
-            </ul>
-        </nav>
-    </header>
-    <main>
-        <section class="hero">
-            <h2>UN CHAT LLENO DE JUEGOS Y DIVERSIÓN</h2>
-            <p>ChatKlax es la plataforma perfecta para pasar un buen rato con amigos, crear comunidades y compartir momentos. Personaliza tu espacio para chatear, jugar y socializar.</p>
-            <div class="icon-bar">
-                <span>🌟</span>
-                <span>🎮</span>
-                <span>🎵</span>
-            </div>
-            <button onclick="window.location.href='login.html'">Abrir ChatKlax</button>
-        </section>
-    </main>
+    <div id="login-form" class="container">
+        <h1>Bienvenido a la Red Social Prueba</h1>
+        <form id="auth-form">
+            <input type="email" id="email" placeholder="Email" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit" id="submit-btn">Iniciar Sesión</button>
+            <button type="button" id="toggle-registro">Registrarse</button>
+        </form>
+        <p id="error-msg" style="color: red;"></p>
+        <p id="success-msg" style="color: green;"></p>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module" src="script.js"></script>
 </body>
 </html>
