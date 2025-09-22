@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 // Config de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -64,6 +64,8 @@ authForm.addEventListener('submit', async (e) => {
         let userCredential;
         if (isRegistro) {
             userCredential = await createUserWithEmailAndPassword(auth, email, password);
+            // Establecer un nombre por defecto (puedes pedirlo en un formulario futuro)
+            await updateProfile(userCredential.user, { displayName: email.split('@')[0] });
             console.log('Usuario registrado:', userCredential.user);
             successMsg.textContent = '¡Registro exitoso! Redirigiendo...';
         } else {
@@ -74,7 +76,7 @@ authForm.addEventListener('submit', async (e) => {
 
         // Esperar a que el estado de autenticación se actualice antes de redirigir
         await new Promise(resolve => setTimeout(resolve, 1000)); // Espera 1 segundo
-        window.location.href = 'feed.html';
+        window.location.href = 'feed.html?user=' + encodeURIComponent(userCredential.user.displayName || email.split('@')[0]);
     } catch (error) {
         console.error('Error de autenticación:', error.code, error.message);
         let errorMessage = error.message;
@@ -99,7 +101,7 @@ authForm.addEventListener('submit', async (e) => {
 onAuthStateChanged(auth, (user) => {
     if (user && window.location.pathname !== '/feed.html') {
         console.log('Usuario autenticado, redirigiendo:', user);
-        window.location.href = 'feed.html';
+        window.location.href = 'feed.html?user=' + encodeURIComponent(user.displayName || user.email.split('@')[0]);
     } else if (!user && window.location.pathname === '/feed.html') {
         console.log('Usuario no autenticado, redirigiendo a login:', window.location.pathname);
         window.location.href = 'index.html';
