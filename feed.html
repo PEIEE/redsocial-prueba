@@ -10,16 +10,50 @@
     <header>
         <div class="logo">RedSocial🎮</div>
         <nav>
-            <a href="#">Perfil</a>
-            <a href="#">Amigos</a>
+            <a href="#chats" class="nav-link" onclick="showSection('chats')">Chats</a>
+            <a href="#reels" class="nav-link" onclick="showSection('reels')">Reels</a>
             <a href="#" class="btn" id="logout-btn">Cerrar Sesión</a>
         </nav>
     </header>
     <main>
-        <div class="feed-container">
-            <h1>¡BIENVENIDO A TU FEED!</h1>
-            <div class="feed-content">
-                <p>Hola mundo, esto es una prueba</p>
+        <div id="chats" class="section active">
+            <div class="feed-container">
+                <h1>Chats</h1>
+                <div class="chat-list">
+                    <div class="chat-item">
+                        <h3>Servidor General</h3>
+                        <p>¡Bienvenido al chat principal!</p>
+                    </div>
+                    <div class="chat-item">
+                        <h3>Amigos</h3>
+                        <p>Conversaciones privadas con amigos.</p>
+                    </div>
+                    <div class="chat-item">
+                        <h3>Juegos</h3>
+                        <p>Discusiones sobre juegos y streams.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="reels" class="section">
+            <div class="feed-container">
+                <h1>Reels - Como TikTok</h1>
+                <div class="reels-list">
+                    <div class="reel-item">
+                        <video controls width="300">
+                            <source src="https://via.placeholder.com/300x500.mp4?text=Reel+1" type="video/mp4">
+                            Tu navegador no soporta videos.
+                        </video>
+                        <p>Reel de prueba 1</p>
+                    </div>
+                    <div class="reel-item">
+                        <video controls width="300">
+                            <source src="https://via.placeholder.com/300x500.mp4?text=Reel+2" type="video/mp4">
+                            Tu navegador no soporta videos.
+                        </video>
+                        <p>Reel de prueba 2</p>
+                    </div>
+                </div>
             </div>
         </div>
         <div class="decorations">
@@ -28,5 +62,6 @@
         </div>
     </main>
     <script type="module" src="feed.js"></script>
+    <script src="feed-navigation.js"></script>
 </body>
 </html>
