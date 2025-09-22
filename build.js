@@ -12,23 +12,29 @@ const env = {
 };
 
 // Verificar que todas las variables existan
-Object.keys(env).forEach(key => {
-    if (!env[key]) {
-        throw new Error(`La variable de entorno ${key} no está definida en Netlify`);
-    }
-});
+const missingVars = Object.keys(env).filter(key => !env[key]);
+if (missingVars.length > 0) {
+    throw new Error(`Las siguientes variables de entorno no están definidas en Netlify: ${missingVars.join(', ')}`);
+}
 
 // Procesar ambos archivos: script.js y feed.js
 ['script.js', 'feed.js'].forEach(file => {
-    // Leer el archivo
-    let content = fs.readFileSync(path.join(__dirname, file), 'utf8');
+    try {
+        // Leer el archivo
+        const filePath = path.join(__dirname, file);
+        let content = fs.readFileSync(filePath, 'utf8');
 
-    // Reemplazar process.env con los valores reales
-    Object.keys(env).forEach(key => {
-        const regex = new RegExp(`process.env.${key}`, 'g');
-        content = content.replace(regex, `"${env[key]}"`);
-    });
+        // Reemplazar process.env con los valores reales
+        Object.keys(env).forEach(key => {
+            const regex = new RegExp(`process.env.${key}`, 'g');
+            content = content.replace(regex, JSON.stringify(env[key]));
+        });
 
-    // Guardar el archivo modificado
-    fs.writeFileSync(path.join(__dirname, file), content);
+        // Guardar el archivo modificado
+        fs.writeFileSync(filePath, content);
+        console.log(`Archivo ${file} procesado exitosamente.`);
+    } catch (error) {
+        console.error(`Error procesando ${file}:`, error.message);
+        throw error;
+    }
 });
