@@ -19,14 +19,15 @@
         <aside class="sidebar">
             <h2>Chats</h2>
             <div class="chat-list">
-                <div class="chat-item" onclick="selectChat(this)">
+                <div class="chat-item" data-chat-id="general" onclick="selectChat(this)">
                     <h3>Servidor General</h3>
                     <p>Activo ahora</p>
                 </div>
-                <div class="chat-item" onclick="selectChat(this)">
+                <div class="chat-item" data-chat-id="amigos" onclick="selectChat(this)">
                     <h3>Amigos</h3>
+                    <p>3 nuevos mensajes</p>
                 </div>
-                <div class="chat-item" onclick="selectChat(this)">
+                <div class="chat-item" data-chat-id="juegos" onclick="selectChat(this)">
                     <h3>Juegos</h3>
                     <p>En vivo</p>
                 </div>
@@ -69,6 +70,18 @@
                 </div>
                 <button class="nav-button prev-btn" onclick="navigateReel(-1)">⬅️ Anterior</button>
                 <button class="nav-button next-btn" onclick="navigateReel(1)">Siguiente ➡️</button>
+            </div>
+            <!-- Panel de Chat Privado -->
+            <div id="chat-panel" class="chat-panel hidden">
+                <div class="chat-header">
+                    <h3 id="chat-title">Chat con Amigos</h3>
+                    <button id="close-chat" onclick="closeChat()">✕</button>
+                </div>
+                <div id="messages-container" class="messages-container"></div>
+                <div class="message-input-container">
+                    <input type="text" id="message-input" placeholder="Escribe un mensaje..." maxlength="500">
+                    <button id="send-button" onclick="sendMessage()">Enviar</button>
+                </div>
             </div>
         </section>
     </main>
