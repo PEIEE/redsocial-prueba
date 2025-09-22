@@ -1,5 +1,5 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
 // Config de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -17,12 +17,17 @@ const auth = getAuth(app);
 
 // Elementos DOM
 const loginForm = document.getElementById('login-form');
-const feed = document.getElementById('feed');
 const authForm = document.getElementById('auth-form');
 const submitBtn = document.getElementById('submit-btn');
 const toggleBtn = document.getElementById('toggle-registro');
 const errorMsg = document.getElementById('error-msg');
 const successMsg = document.getElementById('success-msg');
+
+// Verificar que los elementos existan
+if (!loginForm || !authForm || !submitBtn || !toggleBtn || !errorMsg || !successMsg) {
+    console.error('Uno o más elementos del DOM no se encontraron. Verifica los IDs en index.html.');
+    throw new Error('Elementos del DOM faltantes');
+}
 
 let isRegistro = false;
 
@@ -46,11 +51,15 @@ authForm.addEventListener('submit', async (e) => {
     try {
         if (isRegistro) {
             await createUserWithEmailAndPassword(auth, email, password);
-            successMsg.textContent = '¡Registro exitoso! Bienvenido.';
+            successMsg.textContent = '¡Registro exitoso! Redirigiendo...';
         } else {
             await signInWithEmailAndPassword(auth, email, password);
-            successMsg.textContent = '¡Inicio de sesión exitoso!';
+            successMsg.textContent = '¡Inicio de sesión exitoso! Redirigiendo...';
         }
+        // Redirigir a feed.html
+        setTimeout(() => {
+            window.location.href = 'feed.html';
+        }, 1000); // Espera 1 segundo para mostrar el mensaje
     } catch (error) {
         let errorMessage = error.message;
         if (error.code === 'auth/email-already-in-use') {
@@ -66,23 +75,9 @@ authForm.addEventListener('submit', async (e) => {
     }
 });
 
-// Observar estado de autenticación
+// Verificar estado de autenticación
 onAuthStateChanged(auth, (user) => {
-    if (user) {
-        loginForm.classList.add('hidden');
-        feed.classList.remove('hidden');
-    } else {
-        loginForm.classList.remove('hidden');
-        feed.classList.add('hidden');
-    }
-});
-
-// Logout
-logoutBtn.addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        successMsg.textContent = 'Sesión cerrada correctamente.';
-    } catch (error) {
-        errorMsg.textContent = error.message;
+    if (user && window.location.pathname !== '/feed.html') {
+        window.location.href = 'feed.html';
     }
 });
