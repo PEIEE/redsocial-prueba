@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Social Prueba - Feed</title>
+    <title>Red Social Prueba - Inicio</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -16,7 +16,17 @@
         </nav>
     </header>
     <main>
-        <div id="chats" class="section active">
+        <div id="welcome" class="section active">
+            <div class="welcome-container">
+                <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
+                <p>Estás dentro de tu comunidad gamer. Explora chats, disfruta de reels y conecta con amigos.</p>
+                <div class="welcome-buttons">
+                    <a href="#chats" class="btn primary" onclick="showSection('chats')">Ir a Chats</a>
+                    <a href="#reels" class="btn primary" onclick="showSection('reels')">Ver Reels</a>
+                </div>
+            </div>
+        </div>
+        <div id="chats" class="section">
             <div class="feed-container">
                 <h1>Chats - Como Discord</h1>
                 <div class="chat-list">
@@ -76,5 +86,6 @@
     <script type="module" src="feed.js"></script>
     <script src="feed-navigation.js"></script>
     <script src="reel-interactions.js"></script>
+    <script src="feed-welcome.js"></script>
 </body>
 </html>
