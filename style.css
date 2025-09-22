@@ -51,6 +51,15 @@ nav a:hover {
     background-color: #677bc4;
 }
 
+.btn.secondary {
+    background-color: #404eed;
+    color: #fff;
+}
+
+.btn.secondary:hover {
+    background-color: #3646c4;
+}
+
 main {
     position: relative;
     min-height: calc(100vh - 60px);
@@ -80,32 +89,35 @@ main {
     margin-bottom: 30px;
 }
 
-.feed-container {
+.login-container {
     background: rgba(255, 255, 255, 0.1);
     padding: 40px;
     border-radius: 10px;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
     text-align: center;
     width: 100%;
-    max-width: 600px;
+    max-width: 400px;
 }
 
-.feed-container h1 {
+.login-container h1 {
     font-size: 32px;
     margin-bottom: 20px;
     color: #fff;
 }
 
-.feed-content {
-    margin-top: 20px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
+.login-container input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
     border-radius: 5px;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-size: 16px;
 }
 
-.feed-content p {
-    font-size: 16px;
-    color: #d1d1d1;
+.login-container input::placeholder {
+    color: #ccc;
 }
 
 .decorations {
