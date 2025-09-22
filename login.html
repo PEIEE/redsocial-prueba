@@ -3,35 +3,143 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Red Social Prueba - Login</title>
-    <link rel="stylesheet" href="style.css">
+    <title>Red Social: ChatKlax - Login</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        #login-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e2a44 0%, #141b29 100%);
+            display: flex;
+            flex-direction: column;
+            z-index: 10000;
+            overflow-y: auto;
+        }
+
+        .auth-container {
+            background: rgba(47, 49, 54, 0.9);
+            padding: 2rem;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 400px;
+            color: white;
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+        }
+
+        .auth-container input {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            background: #3c3c7a;
+            border: none;
+            border-radius: 4px;
+            color: white;
+        }
+
+        .auth-container button {
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+            background: #6a5acd;
+            border: none;
+            border-radius: 4px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .auth-container button:hover {
+            background: #483d8b;
+        }
+
+        .auth-toggle {
+            text-align: center;
+            margin-top: 1rem;
+            color: #a9a9a9;
+        }
+
+        .auth-toggle span {
+            color: #00ffff;
+            cursor: pointer;
+        }
+
+        .auth-toggle span:hover {
+            text-decoration: underline;
+        }
+
+        .background-shapes {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .background-shapes::before,
+        .background-shapes::after {
+            content: '';
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            filter: blur(50px);
+        }
+
+        .background-shapes::before {
+            top: 10%;
+            left: 10%;
+        }
+
+        .background-shapes::after {
+            bottom: 10%;
+            right: 10%;
+        }
+
+        @media (max-width: 640px) {
+            #login-screen {
+                flex-direction: column;
+                padding: 2rem 1rem;
+            }
+
+            .auth-container {
+                padding: 1.5rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="logo">RedSocial🎮</div>
-        <nav>
-            <a href="index.html">Inicio</a>
-            <a href="#">Soporte</a>
-            <a href="index.html" class="btn">Regresar</a>
-        </nav>
-    </header>
-    <main>
-        <div class="login-container">
-            <h1>Iniciar Sesión</h1>
-            <form id="auth-form">
-                <input type="email" id="email" placeholder="Email" required>
-                <input type="password" id="password" placeholder="Contraseña" required>
-                <button type="submit" id="submit-btn" class="btn primary">Iniciar Sesión</button>
-                <button type="button" id="toggle-registro" class="btn">Registrarse</button>
-            </form>
-            <p id="error-msg" style="color: #ff4d4d;"></p>
-            <p id="success-msg" style="color: #00cc00;"></p>
+    <!-- Pantalla de login -->
+    <div id="login-screen">
+        <div class="flex justify-center items-center min-h-screen px-4">
+            <div class="auth-container">
+                <h1 class="text-3xl font-bold text-white text-center mb-6">Iniciar Sesión</h1>
+                <form id="auth-form">
+                    <input type="email" id="email" placeholder="Correo electrónico" required class="w-full p-2 mb-4 bg-[#3c3c7a] border-none rounded text-white">
+                    <input type="password" id="password" placeholder="Contraseña" required class="w-full p-2 mb-4 bg-[#3c3c7a] border-none rounded text-white">
+                    <button type="submit" id="submit-btn" class="w-full p-2 bg-[#6a5acd] border-none rounded text-white hover:bg-[#483d8b]">Iniciar Sesión</button>
+                    <div class="auth-toggle text-center mt-4">
+                        <span id="toggle-registro" class="text-[#00ffff] cursor-pointer hover:underline">Registrarse</span>
+                    </div>
+                    <p id="error-msg" class="text-red-500 mt-2 text-center"></p>
+                    <p id="success-msg" class="text-green-500 mt-2 text-center"></p>
+                </form>
+            </div>
         </div>
-        <div class="decorations">
-            <div class="circle"></div>
-            <div class="character"></div>
-        </div>
-    </main>
+        <div class="background-shapes"></div>
+    </div>
     <script type="module" src="script.js"></script>
 </body>
 </html>
