@@ -18,7 +18,7 @@
     <main>
         <div id="chats" class="section active">
             <div class="feed-container">
-                <h1>Chats</h1>
+                <h1>Chats - Como Discord</h1>
                 <div class="chat-list">
                     <div class="chat-item">
                         <h3>Servidor General</h3>
@@ -36,24 +36,36 @@
             </div>
         </div>
         <div id="reels" class="section">
-            <div class="feed-container">
+            <div class="reels-container">
                 <h1>Reels - Como TikTok</h1>
-                <div class="reels-list">
-                    <div class="reel-item">
-                        <video controls width="300">
-                            <source src="https://via.placeholder.com/300x500.mp4?text=Reel+1" type="video/mp4">
+                <div class="reels-wrapper">
+                    <div class="reel-item" data-index="0">
+                        <video controls autoplay muted loop class="reel-video">
+                            <source src="https://via.placeholder.com/360x640.mp4?text=Reel+1" type="video/mp4">
                             Tu navegador no soporta videos.
                         </video>
-                        <p>Reel de prueba 1</p>
+                        <div class="reel-controls">
+                            <button class="reel-button" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
+                            <button class="reel-button" onclick="toggleFollow(this)">Seguir</button>
+                            <button class="reel-button" onclick="shareReel(this)">Compartir</button>
+                        </div>
+                        <p class="reel-caption">Reel de prueba 1</p>
                     </div>
-                    <div class="reel-item">
-                        <video controls width="300">
-                            <source src="https://via.placeholder.com/300x500.mp4?text=Reel+2" type="video/mp4">
+                    <div class="reel-item" data-index="1">
+                        <video controls autoplay muted loop class="reel-video">
+                            <source src="https://via.placeholder.com/360x640.mp4?text=Reel+2" type="video/mp4">
                             Tu navegador no soporta videos.
                         </video>
-                        <p>Reel de prueba 2</p>
+                        <div class="reel-controls">
+                            <button class="reel-button" onclick="toggleLike(this)">❤️ <span class="like-count">0</span></button>
+                            <button class="reel-button" onclick="toggleFollow(this)">Seguir</button>
+                            <button class="reel-button" onclick="shareReel(this)">Compartir</button>
+                        </div>
+                        <p class="reel-caption">Reel de prueba 2</p>
                     </div>
                 </div>
+                <button class="nav-button" onclick="navigateReel(-1)">⬅️ Anterior</button>
+                <button class="nav-button" onclick="navigateReel(1)">Siguiente ➡️</button>
             </div>
         </div>
         <div class="decorations">
@@ -63,5 +75,6 @@
     </main>
     <script type="module" src="feed.js"></script>
     <script src="feed-navigation.js"></script>
+    <script src="reel-interactions.js"></script>
 </body>
 </html>
