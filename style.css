@@ -309,3 +309,19 @@ body {
     cursor: pointer;
     font-size: 18px;
 }
+
+/* Estilos para secciones dinámicas */
+.section {
+    display: none;
+    width: 100%;
+    height: 100%;
+}
+
+.section.active {
+    display: block;
+}
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+}
+
