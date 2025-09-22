@@ -21,22 +21,29 @@ const logoutBtn = document.getElementById('logout-btn');
 // Verificar que el elemento exista
 if (!logoutBtn) {
     console.error('El elemento logout-btn no se encontró. Verifica el ID en feed.html.');
-    throw new Error('Elemento logout-btn faltante');
 }
 
 // Verificar estado de autenticación
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = 'index.html';
+    } else {
+        // Actualizar el nombre de usuario con el email de Firebase
+        const userNameSpan = document.getElementById('user-name');
+        if (userNameSpan) {
+            userNameSpan.textContent = user.email.split('@')[0] || 'Usuario';
+        }
     }
 });
 
 // Logout
-logoutBtn.addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        window.location.href = 'index.html';
-    } catch (error) {
-        console.error('Error al cerrar sesión:', error.message);
-    }
-});
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', async () => {
+        try {
+            await signOut(auth);
+            window.location.href = 'index.html';
+        } catch (error) {
+            console.error('Error al cerrar sesión:', error.message);
+        }
+    });
+}
