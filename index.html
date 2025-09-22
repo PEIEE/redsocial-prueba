@@ -14,7 +14,8 @@
             <div class="logo">
                 <img src="CHATKLAX.png" alt="ChatKlax Logo">
             </div>
-            <nav>
+            <button class="menu-toggle">☰</button>
+            <nav class="nav-menu">
                 <a href="#">Descargar</a>
                 <a href="#">Premium</a>
                 <a href="#">Descubrir</a>
@@ -84,5 +85,17 @@
         </div>
         <div class="background-shapes"></div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const menuToggle = document.querySelector('.menu-toggle');
+            const navMenu = document.querySelector('.nav-menu');
+            if (menuToggle && navMenu) {
+                menuToggle.addEventListener('click', () => {
+                    navMenu.classList.toggle('active');
+                    menuToggle.textContent = navMenu.classList.contains('active') ? '✖' : '☰';
+                });
+            }
+        });
+    </script>
 </body>
 </html>
