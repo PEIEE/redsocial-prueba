@@ -82,9 +82,7 @@ nav a:hover {
     padding: 15px;
     border-radius: 5px;
     cursor: pointer;
-    transition: background 0წ
-
-System: 0.3s;
+    transition: background 0.3s;
 }
 
 .chat-item:hover {
@@ -224,28 +222,68 @@ System: 0.3s;
     display: block;
 }
 
-.decorations {
-    position: absolute;
+.auth-container {
+    background: rgba(47, 49, 54, 0.9);
+    padding: 2rem;
+    border-radius: 8px;
+    width: 100%;
+    max-width: 400px;
+    color: white;
+    box-shadow: 0 0 20px rgba(255, 0, 255, 0.5);
+}
+
+.auth-container input {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background: #3c3c7a;
+    border: none;
+    border-radius: 4px;
+    color: white;
+}
+
+.auth-container button {
+    width: 100%;
+    padding: 0.5rem;
+    margin: 0.5rem 0;
+    background: #6a5acd;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+}
+
+.auth-container button:hover {
+    background: #483d8b;
+}
+
+.auth-toggle {
+    text-align: center;
+    margin-top: 1rem;
+    color: #a9a9a9;
+}
+
+.auth-toggle span {
+    color: #00ffff;
+    cursor: pointer;
+}
+
+.auth-toggle span:hover {
+    text-decoration: underline;
+}
+
+/* Estilos de index.html */
+#landing-screen {
+    position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    pointer-events: none;
-    z-index: -1;
+    background: linear-gradient(135deg, #1e2a44 0%, #141b29 100%);
+    z-index: 10000;
+    overflow-y: auto;
 }
 
-.circle {
-    position: absolute;
-    width: 200px;
-    height: 200px;
-    background: rgba(114, 137, 218, 0.3);
-    border-radius: 50%;
-    top: 10%;
-    left: 10%;
-    filter: blur(50px);
-}
-
-/* Estilos de index.html */
 .landing-header {
     display: flex;
     justify-content: space-between;
@@ -481,36 +519,148 @@ System: 0.3s;
     right: 10%;
 }
 
-@media (max-width: 640px) {
-    #landing-screen {
+/* Media queries para tablets */
+@media (max-width: 768px) {
+    .landing-main {
         flex-direction: column;
         padding: 6rem 1rem;
     }
+
     .landing-text h1 {
-        font-size: 2rem;
+        font-size: 2.5rem;
     }
+
     .landing-text p {
         font-size: 1rem;
+        max-width: 100%;
     }
+
     .landing-preview .mockup-screen {
-        height: 300px;
+        height: 350px;
+        max-width: 100%;
     }
+
     .mockup-screen .channel-sidebar {
         width: 150px;
     }
+
     .mockup-screen .channel-header {
         font-size: 0.8rem;
     }
+
     .mockup-screen .channel-name {
         font-size: 0.7rem;
     }
+
     .mockup-screen .chat-header {
         font-size: 0.8rem;
     }
+
     .mockup-screen .message-content {
         font-size: 0.7rem;
     }
+}
+
+/* Media queries para móviles */
+@media (max-width: 640px) {
+    .landing-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
     .landing-header .logo img {
-        height: 30px;
+        height: 50px;
+    }
+
+    .landing-header nav {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    .landing-header nav a {
+        margin: 0 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .landing-header .open-btn {
+        padding: 0.4rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    .landing-main {
+        padding: 4rem 1rem;
+    }
+
+    .landing-text h1 {
+        font-size: 2rem;
+    }
+
+    .landing-text p {
+        font-size: 0.9rem;
+    }
+
+    .landing-preview .mockup-screen {
+        height: 300px;
+    }
+
+    .mockup-screen .server-sidebar {
+        width: 50px;
+    }
+
+    .mockup-screen .server-icon {
+        width: 35px;
+        height: 35px;
+        border-radius: 10px;
+    }
+
+    .mockup-screen .channel-sidebar {
+        width: 120px;
+    }
+
+    .mockup-screen .channel-header {
+        font-size: 0.7rem;
+    }
+
+    .mockup-screen .channel-name {
+        font-size: 0.6rem;
+    }
+
+    .mockup-screen .chat-header {
+        font-size: 0.7rem;
+    }
+
+    .mockup-screen .message-content {
+        font-size: 0.6rem;
+        max-width: 70%;
+    }
+
+    .dashboard {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+    }
+
+    .reels-section {
+        max-width: 100%;
+    }
+
+    .reels-wrapper {
+        height: 50vh;
+    }
+
+    .reel-caption {
+        font-size: 14px;
+        max-width: 80%;
+    }
+
+    .nav-button {
+        padding: 8px 16px;
+        font-size: 14px;
     }
 }
