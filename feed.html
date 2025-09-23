@@ -11,7 +11,7 @@
         <div class="logo">Chat Klax</div>
         <div class="icons">
             <button id="bell-icon">🔔</button>
-            <button id="user-icon" class="user-icon">👤</button>
+            <button id="user-icon">👤</button>
             <button id="logout-btn">Cerrar Sesión</button>
         </div>
     </header>
@@ -51,6 +51,16 @@
                 <button id="send-button" onclick="sendMessage()">Enviar</button>
             </div>
         </main>
+
+        <!-- Profile Panel -->
+        <div class="profile-panel hidden" id="profile-panel">
+            <h3>Personalizar Perfil</h3>
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="display-name">
+            <label>Avatar:</label>
+            <input type="file" id="avatar-upload" accept="image/*">
+            <button id="save-profile">Guardar</button>
+        </div>
     </div>
 
     <script src="feed.js"></script>
