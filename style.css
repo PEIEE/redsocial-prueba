@@ -107,6 +107,11 @@ nav a:hover {
     max-height: 200px;
     overflow-y: auto;
     margin-bottom: 1rem;
+    display: none;
+}
+
+.search-results:not(.hidden) {
+    display: block;
 }
 
 .search-result {
@@ -116,6 +121,7 @@ nav a:hover {
     background: rgba(255, 255, 255, 0.05);
     margin-bottom: 0.5rem;
     border-radius: 4px;
+    justify-content: space-between;
 }
 
 .search-avatar {
@@ -138,6 +144,11 @@ nav a:hover {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
     cursor: pointer;
+    transition: background 0.3s;
+}
+
+.friend-item:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .friend-avatar {
@@ -147,9 +158,15 @@ nav a:hover {
     margin-right: 0.5rem;
 }
 
+.friend-status {
+    margin-left: auto;
+    color: #43b581;
+    font-size: 12px;
+}
+
 .request-item button {
     padding: 0.3rem 0.6rem;
-    margin-left: auto;
+    margin-left: 0.5rem;
     border: none;
     border-radius: 4px;
     cursor: pointer;
@@ -164,6 +181,20 @@ nav a:hover {
 .request-item button:last-of-type {
     background: #f44336;
     color: white;
+}
+
+.requests-section {
+    margin-top: 20px;
+}
+
+.requests-section h3 {
+    font-size: 18px;
+    color: #7289da;
+    margin-bottom: 10px;
+}
+
+.requests-section.hidden {
+    display: none;
 }
 
 .chat-list {
@@ -253,6 +284,10 @@ nav a:hover {
     flex-direction: column;
     gap: 0.5rem;
     z-index: 50;
+}
+
+.profile-panel.hidden {
+    display: none;
 }
 
 .profile-panel h3 {
@@ -391,15 +426,15 @@ nav a:hover {
     display: block;
 }
 
-/* Estilos para el Chat Privado */
+/* Estilos para el Chat Privado - Updated to Discord-like */
 .chat-panel {
     position: absolute;
     top: 0;
     right: 0;
-    width: 400px;
+    width: 300px;
     height: 100%;
-    background: rgba(47, 49, 54, 0.95);
-    border-left: 1px solid #7289da;
+    background: #2f3136;
+    border-left: 1px solid #202225;
     display: flex;
     flex-direction: column;
     z-index: 100;
@@ -416,8 +451,9 @@ nav a:hover {
     justify-content: space-between;
     align-items: center;
     padding: 1rem;
-    background: rgba(114, 137, 218, 0.2);
-    border-bottom: 1px solid #7289da;
+    background: #202225;
+    border-bottom: 1px solid #202225;
+    color: #fff;
 }
 
 .chat-header h3 {
@@ -440,24 +476,28 @@ nav a:hover {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    background: #36393f;
 }
 
 .message {
-    padding: 0.5rem;
+    padding: 0.5rem 0.75rem;
     border-radius: 8px;
     max-width: 80%;
     word-wrap: break-word;
+    font-size: 14px;
 }
 
 .message.sent {
     background: #7289da;
     align-self: flex-end;
     margin-left: auto;
+    color: #fff;
 }
 
 .message.received {
-    background: rgba(255, 255, 255, 0.1);
+    background: #40444b;
     align-self: flex-start;
+    color: #dcddde;
 }
 
 .message small {
@@ -465,23 +505,29 @@ nav a:hover {
     opacity: 0.7;
     font-size: 0.8rem;
     margin-top: 0.25rem;
+    color: #b9bbbe;
 }
 
 .message-input-container {
     display: flex;
     padding: 1rem;
-    border-top: 1px solid #7289da;
+    border-top: 1px solid #202225;
+    background: #40444b;
     gap: 0.5rem;
 }
 
 #message-input {
     flex: 1;
-    padding: 0.5rem;
-    background: #3c3c7a;
-    border: none;
+    padding: 0.5rem 1rem;
+    background: #40444b;
+    border: 1px solid #202225;
     border-radius: 20px;
-    color: #fff;
+    color: #dcddde;
     outline: none;
+}
+
+#message-input::placeholder {
+    color: #72767d;
 }
 
 #send-button {
