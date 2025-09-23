@@ -13,15 +13,14 @@
             <button id="notifications-btn">🔔</button>
             <button id="profile-btn" disabled>👤</button>
             <button id="logout-btn">Cerrar Sesión</button>
+            <button id="messages-btn">💬</button> <!-- Nuevo botón de mensajes -->
         </div>
     </header>
     <main class="dashboard">
         <aside class="sidebar">
             <div class="servers-list">
-                <!-- Icons de servidores (chats grupales) -->
                 <div class="server-icon" data-chat-id="general" onclick="selectChat(this)" title="Servidor General">🌟</div>
                 <div class="server-icon" data-chat-id="juegos" onclick="selectChat(this)" title="Juegos">🎮</div>
-                <!-- Añade más icons si necesitas -->
             </div>
             <h2>Mensajes Directos</h2>
             <div class="search-section">
@@ -100,6 +99,18 @@
                 <div class="message-input-container">
                     <input type="text" id="message-input" placeholder="Escribe un mensaje..." maxlength="500">
                     <button id="send-button" onclick="sendMessage()">Enviar</button>
+                </div>
+            </div>
+            <!-- Panel de Lista de Amigos -->
+            <div id="friends-panel" class="friends-panel hidden">
+                <div class="friends-header">
+                    <h3>Mensajes Directos</h3>
+                    <button id="close-friends" onclick="closeFriendsPanel()">✕</button>
+                </div>
+                <div id="friends-content" class="friends-content">
+                    <div id="friends-list-panel" class="friends-list">
+                        <!-- Amigos se cargan dinámicamente -->
+                    </div>
                 </div>
             </div>
         </section>
