@@ -15,11 +15,13 @@ const firebaseConfig = {
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app); // Inicializar Firestore
+const db = getFirestore(app);
 
 let currentUser = null;
 let currentChatId = null;
-let unsubscribeMessages = null; // Para limpiar listeners
+let unsubscribeMessages = null;
+let unsubscribeFriends = null;
+let unsubscribeRequests = null;
 
 // Elementos DOM
 const logoutBtn = document.getElementById('logout-btn');
@@ -40,6 +42,10 @@ const searchResults = document.getElementById('search-results');
 const friendsList = document.getElementById('friends-list');
 const requestsSection = document.getElementById('requests-section');
 const requestsList = document.getElementById('requests-list');
+const messagesBtn = document.getElementById('messages-btn');
+const friendsPanel = document.getElementById('friends-panel');
+const friendsListPanel = document.getElementById('friends-list-panel');
+const closeFriendsBtn = document.getElementById('close-friends');
 
 // Verificar que los elementos existan
 if (!logoutBtn || !userNameSpan || !userAvatar || !profilePanel) {
@@ -87,7 +93,7 @@ async function loadUserProfile(user) {
 async function uploadAvatar(file) {
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', 'avatar_upload'); // Reemplaza con tu preset
+    formData.append('upload_preset', 'avatar_upload');
 
     try {
         const response = await fetch(`https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload`, {
@@ -128,9 +134,21 @@ saveProfileBtn.addEventListener('click', async () => {
         if (!profilePanel.classList.contains('hidden')) {
             chatPanel.classList.add('hidden');
             if (unsubscribeMessages) unsubscribeMessages();
-            loadRequests(); // Cargar solicitudes al abrir perfil
+            loadRequests();
         }
     });
+});
+
+// Abrir panel de amigos al clicar en el botón de mensajes
+messagesBtn.addEventListener('click', () => {
+    friendsPanel.classList.remove('hidden');
+    chatPanel.classList.add('hidden');
+    loadFriendsPanel();
+});
+
+// Cerrar panel de amigos
+closeFriendsBtn.addEventListener('click', () => {
+    friendsPanel.classList.add('hidden');
 });
 
 // Búsqueda de usuarios
@@ -175,11 +193,11 @@ window.addFriend = async function(receiverUid) {
     searchResults.classList.add('hidden');
 };
 
-// Función para cargar amigos
+// Función para cargar amigos en la lista principal
 function loadFriends() {
     if (unsubscribeFriends) unsubscribeFriends();
     const friendshipsRef = collection(db, 'friendships');
-    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid)); // Nota: Para eficiencia, considera indexar o usar OR para userUid2
+    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid));
     unsubscribeFriends = onSnapshot(q, (snapshot) => {
         friendsList.innerHTML = '';
         snapshot.forEach((doc) => {
@@ -194,8 +212,36 @@ function loadFriends() {
                 `;
                 friendItem.onclick = () => {
                     openPrivateChat(friendUid, friend.displayName, friend.avatarUrl);
+                    friendsPanel.classList.add('hidden');
                 };
                 friendsList.appendChild(friendItem);
+            });
+        });
+    });
+}
+
+// Función para cargar amigos en el panel de mensajes
+function loadFriendsPanel() {
+    if (unsubscribeFriends) unsubscribeFriends();
+    const friendshipsRef = collection(db, 'friendships');
+    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid));
+    unsubscribeFriends = onSnapshot(q, (snapshot) => {
+        friendsListPanel.innerHTML = '';
+        snapshot.forEach((doc) => {
+            const friendship = doc.data();
+            const friendUid = friendship.userUid1 === currentUser.uid ? friendship.userUid2 : friendship.userUid1;
+            loadFriendProfile(friendUid, (friend) => {
+                const friendItem = document.createElement('div');
+                friendItem.classList.add('friend-item');
+                friendItem.innerHTML = `
+                    <img src="${friend.avatarUrl || 'default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
+                    <span>${friend.displayName}</span>
+                `;
+                friendItem.onclick = () => {
+                    openPrivateChat(friendUid, friend.displayName, friend.avatarUrl);
+                    friendsPanel.classList.add('hidden');
+                };
+                friendsListPanel.appendChild(friendItem);
             });
         });
     });
@@ -217,7 +263,7 @@ window.openPrivateChat = function(friendUid, friendName, friendAvatar) {
     chatTitle.textContent = friendName;
     chatUserAvatar.src = friendAvatar || 'default-avatar.png';
     chatPanel.classList.remove('hidden');
-    profilePanel.classList.add('hidden');
+    friendsPanel.classList.add('hidden');
     loadChatMessages(chatId);
     messageInput.focus();
 };
@@ -262,6 +308,7 @@ window.acceptRequest = async function(requestId, senderUid) {
         timestamp: serverTimestamp()
     });
     loadFriends();
+    loadFriendsPanel();
     alert('¡Amigo agregado!');
 };
 
@@ -280,6 +327,11 @@ window.closeChat = function() {
     messagesContainer.innerHTML = '';
     currentChatId = null;
     messageInput.value = '';
+};
+
+// Función para cerrar el panel de amigos
+window.closeFriendsPanel = function() {
+    friendsPanel.classList.add('hidden');
 };
 
 // Función para cargar mensajes del chat en tiempo real
