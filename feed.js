@@ -25,12 +25,7 @@ let unsubscribeRequests = null;
 
 // Elementos DOM
 const logoutBtn = document.getElementById('logout-btn');
-const userNameSpan = document.getElementById('user-name');
-const userAvatar = document.getElementById('user-avatar');
-const profilePanel = document.getElementById('profile-panel');
-const displayNameInput = document.getElementById('display-name');
-const avatarUpload = document.getElementById('avatar-upload');
-const saveProfileBtn = document.getElementById('save-profile');
+const userIcon = document.getElementById('user-icon');
 const channelTitle = document.getElementById('channel-title');
 const messagesContainer = document.getElementById('messages-container');
 const messageInput = document.getElementById('message-input');
@@ -45,7 +40,6 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = 'index.html';
     } else {
         currentUser = user;
-        loadUserProfile(user);
         loadFriends();
         loadRequests();
         loadChannelMessages(currentChannel);
@@ -62,62 +56,9 @@ logoutBtn.addEventListener('click', async () => {
     }
 });
 
-// Función para cargar el perfil del usuario
-async function loadUserProfile(user) {
-    const userRef = doc(db, 'users', user.uid);
-    const userSnap = await getDoc(userRef);
-    if (userSnap.exists()) {
-        const data = userSnap.data();
-        userNameSpan.textContent = data.displayName || user.email.split('@')[0] || 'Usuario';
-        userAvatar.src = data.avatarUrl || 'default-avatar.png';
-        displayNameInput.value = data.displayName || '';
-    } else {
-        userNameSpan.textContent = user.email.split('@')[0] || 'Usuario';
-        userAvatar.src = 'default-avatar.png';
-    }
-}
-
-// Función para subir avatar a Cloudinary
-async function uploadAvatar(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'avatar_upload');
-
-    try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload`, {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        if (data.secure_url) {
-            return data.secure_url;
-        } else {
-            throw new Error('Error al subir la imagen a Cloudinary');
-        }
-    } catch (error) {
-        console.error('Error en uploadAvatar:', error.message);
-        return 'default-avatar.png';
-    }
-}
-
-// Función para guardar el perfil
-saveProfileBtn.addEventListener('click', async () => {
-    const displayName = displayNameInput.value.trim();
-    let avatarUrl = userAvatar.src;
-    if (avatarUpload.files[0]) {
-        avatarUrl = await uploadAvatar(avatarUpload.files[0]);
-    }
-    if (displayName || avatarUrl !== 'default-avatar.png') {
-        const userRef = doc(db, 'users', currentUser.uid);
-        await setDoc(userRef, { displayName, avatarUrl }, { merge: true });
-        loadUserProfile(currentUser);
-        profilePanel.classList.add('hidden');
-    }
-});
-
-// Abrir/cerrar panel de perfil al clicar en ícono de usuario
-document.getElementById('user-icon').addEventListener('click', () => {
-    profilePanel.classList.toggle('hidden');
+// Open profile in new tab
+userIcon.addEventListener('click', () => {
+    window.open('profile.html', '_blank');
 });
 
 // Función para abrir un canal
@@ -157,7 +98,7 @@ window.sendMessage = async function() {
         await addDoc(collection(db, 'channels', currentChannel, 'messages'), {
             text: text,
             senderId: currentUser.uid,
-            senderName: userNameSpan.textContent,
+            senderName: currentUser.email.split('@')[0] || 'Usuario',
             timestamp: serverTimestamp()
         });
         messageInput.value = '';
@@ -185,7 +126,7 @@ function loadFriends() {
                 const friendItem = document.createElement('div');
                 friendItem.classList.add('friend-item');
                 friendItem.innerHTML = `
-                    <span>${friend.displayName}</span>
+                    <span>${friend.displayName || friend.email.split('@')[0]}</span>
                     <span class="friend-status">●</span>
                 `;
                 friendsList.appendChild(friendItem);
