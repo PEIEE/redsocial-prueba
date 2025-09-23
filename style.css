@@ -45,6 +45,10 @@ header {
     opacity: 0.5;
 }
 
+.user-icon {
+    cursor: pointer;
+}
+
 .dashboard {
     display: flex;
     height: calc(100vh - 60px);
@@ -242,60 +246,69 @@ header {
     background: #677bc4;
 }
 
-.profile-panel {
-    background: rgba(47, 49, 54, 0.9);
-    padding: 1rem;
-    border-radius: 8px;
-    margin: 1rem auto;
+.profile-container {
     max-width: 400px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    z-index: 50;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
+    margin: 50px auto;
+    padding: 20px;
+    background: rgba(47, 49, 54, 0.9);
+    border-radius: 8px;
+    color: #fff;
 }
 
-.profile-panel.hidden {
-    display: none;
-}
-
-.profile-panel h3 {
-    margin: 0 0 1rem;
-    font-size: 1.2rem;
+.profile-container h2 {
     text-align: center;
+    margin-bottom: 20px;
 }
 
-.profile-panel label {
-    font-size: 1rem;
-    color: #d1d1d1;
+.profile-avatar img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: block;
+    margin: 0 auto 20px;
 }
 
-.profile-panel input {
-    padding: 0.5rem;
+.profile-container label {
+    display: block;
+    margin-bottom: 5px;
+    font-size: 14px;
+}
+
+.profile-container input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 15px;
     background: #3c3c7a;
     border: none;
     border-radius: 4px;
-    color: white;
+    color: #fff;
 }
 
-.profile-panel input[type="file"] {
-    padding: 0.2rem;
+.profile-container input[type="file"] {
+    padding: 5px;
 }
 
-.profile-panel button {
-    padding: 0.5rem;
+.profile-container button {
+    width: 100%;
+    padding: 10px;
     background: #6a5acd;
     border: none;
     border-radius: 4px;
-    color: white;
+    color: #fff;
     cursor: pointer;
+    margin-bottom: 10px;
 }
 
-.profile-panel button:hover {
+.profile-container button:hover {
     background: #483d8b;
+}
+
+#back-btn {
+    background: #7289da;
+}
+
+#back-btn:hover {
+    background: #677bc4;
 }
 
 @media (max-width: 768px) {
@@ -321,9 +334,9 @@ header {
         width: 100%;
         height: calc(100vh - 260px);
     }
-    .profile-panel {
+    .profile-container {
         width: 90%;
-        max-width: 90%;
+        margin: 20px auto;
     }
 }
 
@@ -341,8 +354,12 @@ header {
     .chat-area {
         height: calc(100vh - 230px);
     }
-    .profile-panel {
+    .profile-container {
         width: 95%;
-        max-width: 95%;
+        margin: 10px auto;
+    }
+    .profile-avatar img {
+        width: 80px;
+        height: 80px;
     }
 }
