@@ -17,7 +17,13 @@
     </header>
     <main class="dashboard">
         <aside class="sidebar">
-            <h2>Amigos</h2>
+            <div class="servers-list">
+                <!-- Icons de servidores (chats grupales) -->
+                <div class="server-icon" data-chat-id="general" onclick="selectChat(this)" title="Servidor General">🌟</div>
+                <div class="server-icon" data-chat-id="juegos" onclick="selectChat(this)" title="Juegos">🎮</div>
+                <!-- Añade más icons si necesitas -->
+            </div>
+            <h2>Mensajes Directos</h2>
             <div class="search-section">
                 <input type="text" id="user-search" placeholder="Buscar usuarios...">
             </div>
@@ -84,7 +90,10 @@
             <!-- Panel de Chat Privado -->
             <div id="chat-panel" class="chat-panel hidden">
                 <div class="chat-header">
-                    <h3 id="chat-title">Chat con Amigos</h3>
+                    <div class="chat-user-profile">
+                        <img id="chat-user-avatar" src="default-avatar.png" alt="Avatar" class="chat-user-avatar">
+                        <h3 id="chat-title">Chat con Amigos</h3>
+                    </div>
                     <button id="close-chat" onclick="closeChat()">✕</button>
                 </div>
                 <div id="messages-container" class="messages-container"></div>
