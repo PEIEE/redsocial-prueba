@@ -77,21 +77,50 @@ nav a:hover {
 }
 
 .sidebar {
-    width: 300px;
-    background: rgba(0, 0, 0, 0.3);
-    padding: 20px;
+    width: 80px; /* Ancho estrecho para icons + lista */
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
     height: 100%;
     overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .sidebar h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 14px;
+    margin-bottom: 10px;
     color: #7289da;
+    text-align: center;
+}
+
+.servers-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.server-icon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.server-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .search-section {
     margin-bottom: 1rem;
+    width: 100%;
 }
 
 #user-search {
@@ -101,12 +130,14 @@ nav a:hover {
     border: none;
     border-radius: 4px;
     color: white;
+    font-size: 0.8rem;
 }
 
 .search-results {
     max-height: 200px;
     overflow-y: auto;
     margin-bottom: 1rem;
+    width: 100%;
 }
 
 .search-result {
@@ -116,6 +147,8 @@ nav a:hover {
     background: rgba(255, 255, 255, 0.05);
     margin-bottom: 0.5rem;
     border-radius: 4px;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
 }
 
 .search-avatar {
@@ -129,6 +162,7 @@ nav a:hover {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    width: 100%;
 }
 
 .friend-item, .request-item {
@@ -138,6 +172,8 @@ nav a:hover {
     background: rgba(255, 255, 255, 0.05);
     border-radius: 4px;
     cursor: pointer;
+    font-size: 0.8rem;
+    flex-wrap: wrap;
 }
 
 .friend-avatar {
@@ -164,35 +200,6 @@ nav a:hover {
 .request-item button:last-of-type {
     background: #f44336;
     color: white;
-}
-
-.chat-list {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-.chat-item {
-    background: rgba(255, 255, 255, 0.05);
-    padding: 15px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.chat-item:hover {
-    background: rgba(255, 255, 255, 0.1);
-}
-
-.chat-item h3 {
-    margin: 0 0 5px 0;
-    color: #fff;
-}
-
-.chat-item p {
-    margin: 0;
-    color: #d1d1d1;
-    font-size: 14px;
 }
 
 .content {
@@ -418,6 +425,18 @@ nav a:hover {
     padding: 1rem;
     background: rgba(114, 137, 218, 0.2);
     border-bottom: 1px solid #7289da;
+}
+
+.chat-user-profile {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chat-user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
 }
 
 .chat-header h3 {
@@ -889,6 +908,16 @@ nav a:hover {
         height: 100%;
         z-index: 500;
     }
+
+    .servers-list {
+        flex-direction: row;
+        gap: 5px;
+        flex-wrap: wrap;
+    }
+
+    .friend-item {
+        font-size: 0.8rem;
+    }
 }
 
 /* Media queries para móviles */
@@ -1020,4 +1049,16 @@ nav a:hover {
         max-height: 300px;
         overflow-y: auto;
     }
+
+    .sidebar {
+        width: 60px;
+    }
+
+    .sidebar h2 {
+        font-size: 0.8rem;
+    }
+
+    .friend-item span {
+        display: none;
+    } /* Solo avatar en móviles */
 }
