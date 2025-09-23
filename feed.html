@@ -17,50 +17,75 @@
     </header>
 
     <div class="dashboard">
-        <!-- Server Sidebar -->
-        <aside class="server-sidebar">
-            <div class="server-icon">🏠</div>
-            <div class="server-icon">🎮</div>
-            <div class="server-icon">👥</div>
-        </aside>
-
-        <!-- Channel Sidebar -->
-        <aside class="channel-sidebar">
-            <h3>Canales de Texto</h3>
-            <div class="channel-list">
-                <div class="channel-item" onclick="openChannel('general')"># general</div>
-                <div class="channel-item" onclick="openChannel('gaming')"># gaming</div>
-                <div class="channel-item" onclick="openChannel('chat')"># chat</div>
+        <aside class="sidebar">
+            <h2>Amigos</h2>
+            <div class="search-section">
+                <input type="text" id="user-search" placeholder="Buscar amigos...">
+                <div id="search-results" class="search-results"></div>
             </div>
-            <h3>Amigos</h3>
             <div class="friends-list" id="friends-list"></div>
             <div class="requests-section" id="requests-section">
-                <h3>Solicitudes</h3>
+                <h3>Solicitudes Pendientes</h3>
                 <div id="requests-list" class="requests-list"></div>
             </div>
         </aside>
-
-        <!-- Chat Area -->
-        <main class="chat-area">
+        <main class="content">
+            <div class="welcome-section">
+                <img src="default-avatar.png" alt="Usuario" id="user-avatar" class="user-avatar clickable">
+                <h1>¡Bienvenido, <span id="user-name">Usuario</span>!</h1>
+                <p>Explora tu comunidad gamer y disfruta del contenido.</p>
+                <p class="clickable" onclick="document.getElementById('profile-panel').classList.remove('hidden')">Personalizar Perfil</p>
+            </div>
+            <div class="reels-section" id="reels-section">
+                <div class="reels-wrapper">
+                    <div class="reel-item active">
+                        <video controls class="reel-video">
+                            <source src="reel1.mp4" type="video/mp4">
+                            Tu navegador no soporta videos.
+                        </video>
+                        <div class="reel-controls">
+                            <button class="reel-button">❤️ 0</button>
+                            <button class="reel-button">Seguir</button>
+                            <button class="reel-button">Compartir</button>
+                        </div>
+                        <div class="reel-caption">Reel de prueba 1</div>
+                    </div>
+                    <div class="reel-item">
+                        <video controls class="reel-video">
+                            <source src="reel2.mp4" type="video/mp4">
+                            Tu navegador no soporta videos.
+                        </video>
+                        <div class="reel-controls">
+                            <button class="reel-button">❤️ 0</button>
+                            <button class="reel-button">Seguir</button>
+                            <button class="reel-button">Compartir</button>
+                        </div>
+                        <div class="reel-caption">Reel de prueba 2</div>
+                    </div>
+                </div>
+                <button class="nav-button" onclick="changeReel(-1)">⬅️ Anterior</button>
+                <button class="nav-button" onclick="changeReel(1)">Siguiente ➡️</button>
+            </div>
+        </main>
+        <div class="chat-panel" id="chat-panel">
             <div class="chat-header">
-                <h3 id="channel-title"># general</h3>
+                <h3 id="chat-title">Chat con...</h3>
+                <button id="close-chat" onclick="closeChat()">✕</button>
             </div>
             <div class="messages-container" id="messages-container"></div>
             <div class="message-input-container">
                 <input type="text" id="message-input" placeholder="Escribe un mensaje...">
                 <button id="send-button" onclick="sendMessage()">Enviar</button>
             </div>
-        </main>
-
-        <!-- Profile Panel -->
-        <div class="profile-panel hidden" id="profile-panel">
-            <h3>Personalizar Perfil</h3>
-            <label>Nombre de Usuario:</label>
-            <input type="text" id="display-name">
-            <label>Avatar:</label>
-            <input type="file" id="avatar-upload" accept="image/*">
-            <button id="save-profile">Guardar</button>
         </div>
+    </div>
+    <div class="profile-panel hidden" id="profile-panel">
+        <h3>Personalizar Perfil</h3>
+        <label>Nombre de Usuario:</label>
+        <input type="text" id="display-name">
+        <label>Avatar:</label>
+        <input type="file" id="avatar-upload" accept="image/*">
+        <button id="save-profile">Guardar</button>
     </div>
 
     <script src="feed.js"></script>
