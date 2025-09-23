@@ -1,6 +1,6 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
-import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, orderBy, doc, setDoc, getDoc, where, limit, updateDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, orderBy, doc, setDoc, getDoc, where, limit } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 // Config de Firebase desde variables de entorno
 const firebaseConfig = {
@@ -129,7 +129,7 @@ saveProfileBtn.addEventListener('click', async () => {
         if (!profilePanel.classList.contains('hidden')) {
             chatPanel.classList.add('hidden');
             if (unsubscribeMessages) unsubscribeMessages();
-            loadRequests();
+            loadRequests(); // Cargar solicitudes al abrir perfil
         }
     });
 });
@@ -143,7 +143,7 @@ userSearch.addEventListener('input', async (e) => {
     }
     const usersRef = collection(db, 'users');
     const q = query(usersRef, where('displayName', '>=', query), where('displayName', '<=', query + '\uf8ff'), limit(10));
-    const snapshot = await getDocs(q);
+    const snapshot = await getDocs(q); // Asume getDocs importado
     searchResults.innerHTML = '';
     snapshot.forEach((doc) => {
         const user = doc.data();
@@ -172,7 +172,7 @@ window.addFriend = async function(receiverUid) {
         timestamp: serverTimestamp()
     });
     alert('Solicitud enviada!');
-    userSearch.value = '';
+    userSearch.value = ''; // Limpiar búsqueda
     searchResults.classList.add('hidden');
 };
 
@@ -180,7 +180,7 @@ window.addFriend = async function(receiverUid) {
 function loadFriends() {
     if (unsubscribeFriends) unsubscribeFriends();
     const friendshipsRef = collection(db, 'friendships');
-    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid), limit(50));
+    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid), limit(50)); // O usa userUid2 con OR si Firebase lo soporta
     unsubscribeFriends = onSnapshot(q, (snapshot) => {
         friendsList.innerHTML = '';
         snapshot.forEach((doc) => {
@@ -192,7 +192,6 @@ function loadFriends() {
                 friendItem.innerHTML = `
                     <img src="${friend.avatarUrl || 'default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
                     <span>${friend.displayName}</span>
-                    <span class="friend-status">●</span>
                 `;
                 friendItem.onclick = () => openPrivateChat(friendUid, friend.displayName);
                 friendsList.appendChild(friendItem);
@@ -214,7 +213,7 @@ async function loadFriendProfile(friendUid, callback) {
 window.openPrivateChat = function(friendUid, friendName) {
     const chatId = [currentUser.uid, friendUid].sort().join('_');
     currentChatId = chatId;
-    chatTitle.textContent = friendName;
+    chatTitle.textContent = `Chat con ${friendName}`;
     chatPanel.classList.remove('hidden');
     profilePanel.classList.add('hidden');
     loadChatMessages(chatId);
@@ -248,8 +247,10 @@ function loadRequests() {
 
 // Función para aceptar solicitud
 window.acceptRequest = async function(requestId, senderUid) {
+    // Actualizar solicitud
     const requestRef = doc(db, 'friend_requests', requestId);
     await updateDoc(requestRef, { status: 'accepted' });
+    // Crear amistad mutua
     const friendshipId = [currentUser.uid, senderUid].sort().join('_');
     const friendshipRef = doc(db, 'friendships', friendshipId);
     await setDoc(friendshipRef, {
@@ -257,7 +258,7 @@ window.acceptRequest = async function(requestId, senderUid) {
         userUid2: [currentUser.uid, senderUid].sort()[1],
         timestamp: serverTimestamp()
     });
-    loadFriends();
+    loadFriends(); // Recargar lista de amigos
     alert('¡Amigo agregado!');
 };
 
@@ -266,7 +267,7 @@ window.rejectRequest = async function(requestId) {
     const requestRef = doc(db, 'friend_requests', requestId);
     await updateDoc(requestRef, { status: 'rejected' });
     alert('Solicitud rechazada.');
-    loadRequests();
+    loadRequests(); // Recargar
 };
 
 // Función para cerrar el chat
@@ -321,13 +322,3 @@ window.sendMessage = async function() {
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
-
-// Función para cambiar entre reels (solo un ejemplo básico)
-window.changeReel = function(direction) {
-    const reels = document.querySelectorAll('.reel-item');
-    let current = document.querySelector('.reel-item.active');
-    let index = Array.from(reels).indexOf(current);
-    index = (index + direction + reels.length) % reels.length;
-    current.classList.remove('active');
-    reels[index].classList.add('active');
-};
