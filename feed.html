@@ -3,99 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat Klax - Feed</title>
+    <title>Chat Klax</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
         <div class="logo">Chat Klax</div>
         <div class="icons">
-            <button id="notifications-btn">🔔</button>
-            <button id="profile-btn" disabled>👤</button>
+            <button id="bell-icon">🔔</button>
+            <button id="user-icon">👤</button>
             <button id="logout-btn">Cerrar Sesión</button>
         </div>
     </header>
-    <main class="dashboard">
-        <aside class="sidebar">
-            <h2>Amigos</h2>
-            <div class="search-section">
-                <input type="text" id="user-search" placeholder="Buscar usuarios...">
+
+    <div class="dashboard">
+        <!-- Server Sidebar -->
+        <aside class="server-sidebar">
+            <div class="server-icon">🏠</div>
+            <div class="server-icon">🎮</div>
+            <div class="server-icon">👥</div>
+        </aside>
+
+        <!-- Channel Sidebar -->
+        <aside class="channel-sidebar">
+            <h3>Canales de Texto</h3>
+            <div class="channel-list">
+                <div class="channel-item" onclick="openChannel('general')"># general</div>
+                <div class="channel-item" onclick="openChannel('gaming')"># gaming</div>
+                <div class="channel-item" onclick="openChannel('chat')"># chat</div>
             </div>
-            <div id="search-results" class="search-results hidden"></div>
-            <div id="friends-list" class="friends-list">
-                <!-- Amigos se cargan dinámicamente -->
-            </div>
-            <div class="requests-section hidden" id="requests-section">
-                <h3>Solicitudes Pendientes</h3>
-                <div id="requests-list"></div>
+            <h3>Amigos</h3>
+            <div class="friends-list" id="friends-list"></div>
+            <div class="requests-section" id="requests-section">
+                <h3>Solicitudes</h3>
+                <div id="requests-list" class="requests-list"></div>
             </div>
         </aside>
-        <section class="content">
-            <div class="welcome-section">
-                <h1>¡Bienvenido, <span id="user-name" class="clickable">Usuario</span>!</h1>
-                <img id="user-avatar" src="default-avatar.png" alt="Avatar" class="user-avatar clickable">
-                <p>Explora tu comunidad gamer y disfruta del contenido.</p>
+
+        <!-- Chat Area -->
+        <main class="chat-area">
+            <div class="chat-header">
+                <h3 id="channel-title"># general</h3>
             </div>
-            <div id="profile-panel" class="profile-panel hidden">
-                <h3>Personalizar Perfil</h3>
-                <label for="display-name">Nombre de Usuario:</label>
-                <input type="text" id="display-name" placeholder="Tu nombre">
-                <label for="avatar-upload">Avatar:</label>
-                <input type="file" id="avatar-upload" accept="image/*">
-                <button id="save-profile">Guardar</button>
-                <div class="requests-section">
-                    <h4>Solicitudes Pendientes</h4>
-                    <div id="requests-list"></div>
-                </div>
+            <div class="messages-container" id="messages-container"></div>
+            <div class="message-input-container">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                <button id="send-button" onclick="sendMessage()">Enviar</button>
             </div>
-            <div class="reels-section">
-                <h2>Reels</h2>
-                <div class="reels-wrapper">
-                    <div class="reel-item active">
-                        <video src="reel1.mp4" loop>
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="reel-controls">
-                            <button class="reel-button like-btn" onclick="toggleLike(this)">
-                                ❤️ <span class="like-count">0</span>
-                            </button>
-                            <button class="reel-button follow-btn" onclick="toggleFollow(this)">Seguir</button>
-                            <button class="reel-button share-btn" onclick="shareReel(this)">Compartir</button>
-                        </div>
-                        <p class="reel-caption">Reel de prueba 1</p>
-                    </div>
-                    <div class="reel-item">
-                        <video src="reel2.mp4" loop>
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="reel-controls">
-                            <button class="reel-button like-btn" onclick="toggleLike(this)">
-                                ❤️ <span class="like-count">0</span>
-                            </button>
-                            <button class="reel-button follow-btn" onclick="toggleFollow(this)">Seguir</button>
-                            <button class="reel-button share-btn" onclick="shareReel(this)">Compartir</button>
-                        </div>
-                        <p class="reel-caption">Reel de prueba 2</p>
-                    </div>
-                </div>
-                <button class="nav-button prev-btn" onclick="navigateReel(-1)">⬅️ Anterior</button>
-                <button class="nav-button next-btn" onclick="navigateReel(1)">Siguiente ➡️</button>
-            </div>
-            <!-- Panel de Chat Privado -->
-            <div id="chat-panel" class="chat-panel hidden">
-                <div class="chat-header">
-                    <h3 id="chat-title">Chat con Amigos</h3>
-                    <button id="close-chat" onclick="closeChat()">✕</button>
-                </div>
-                <div id="messages-container" class="messages-container"></div>
-                <div class="message-input-container">
-                    <input type="text" id="message-input" placeholder="Escribe un mensaje..." maxlength="500">
-                    <button id="send-button" onclick="sendMessage()">Enviar</button>
-                </div>
-            </div>
-        </section>
-    </main>
-    <script type="module" src="feed.js"></script>
-    <script src="reel-interactions.js"></script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983845d24d370146',t:'MTc1ODYxMTk1NS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+        </main>
+
+        <!-- Profile Panel -->
+        <div class="profile-panel hidden" id="profile-panel">
+            <h3>Personalizar Perfil</h3>
+            <label>Nombre de Usuario:</label>
+            <input type="text" id="display-name">
+            <label>Avatar:</label>
+            <input type="file" id="avatar-upload" accept="image/*">
+            <button id="save-profile">Guardar</button>
+        </div>
+    </div>
+
+    <script src="feed.js"></script>
+</body>
 </html>
