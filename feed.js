@@ -105,7 +105,7 @@ async function uploadAvatar(file) {
     return data.secure_url;
 }
 
-// Guardar perfil
+// Guardar perfil (actualizado para manejar el avatar)
 saveProfileBtn.addEventListener('click', async () => {
     const displayName = displayNameInput.value.trim();
     const file = avatarUpload.files[0];
@@ -341,7 +341,7 @@ messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
 
-// Subir adjunto
+// Subir imagen al chat (funcionalidad original restaurada)
 attachBtn.addEventListener('click', () => attachUpload.click());
 attachUpload.addEventListener('change', async () => {
     const file = attachUpload.files[0];
