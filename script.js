@@ -1,9 +1,15 @@
-// script.js
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-// Configuración de Firebase usando variables de entorno de Netlify
+// Config de Firebase (use import.meta.env for Vite, or hardcode for testing)
+// Config de Firebase desde variables de entorno (para Netlify)
 const firebaseConfig = {
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 'your-api-key',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 'your-auth-domain',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 'your-project-id',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 'your-storage-bucket',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || 'your-messaging-sender-id',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || 'your-app-id'
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
     projectId: process.env.FIREBASE_PROJECT_ID,
@@ -16,75 +22,80 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-// Elementos del formulario en login.html
-const authForm = document.getElementById('auth-form');
-const emailInput = document.getElementById('email');
-const passwordInput = document.getElementById('password');
-const submitBtn = document.getElementById('submit-btn');
-const toggleRegistro = document.getElementById('toggle-registro');
-const errorMsg = document.getElementById('error-msg');
-const successMsg = document.getElementById('success-msg');
+// Elementos DOM
+document.addEventListener('DOMContentLoaded', () => {
+    const loginForm = document.getElementById('login-form');
+    const authForm = document.getElementById('auth-form');
+    const submitBtn = document.getElementById('submit-btn');
+    const toggleBtn = document.getElementById('toggle-registro');
+    const errorMsg = document.getElementById('error-msg');
+    const successMsg = document.getElementById('success-msg');
 
-// Estado para alternar entre login y registro
-let isLoginMode = true;
+    // Verificar que los elementos existan
+    if (!loginForm || !authForm || !submitBtn || !toggleBtn || !errorMsg || !successMsg) {
+        console.error('Uno o más elementos del DOM no se encontraron. Verifica los IDs en index.html.');
+        throw new Error('Elementos del DOM faltantes');
+    if (!authForm || !submitBtn || !toggleBtn || !errorMsg || !successMsg) {
+        console.error('Uno o más elementos del DOM no se encontraron. Verifica los IDs en login.html.');
+        return;
+    }
 
-// Cambiar entre modo inicio de sesión y registro
-toggleRegistro.addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    submitBtn.textContent = isLoginMode ? 'Iniciar Sesión' : 'Registrarse';
-    toggleRegistro.textContent = isLoginMode ? 'Registrarse' : 'Iniciar Sesión';
+    let isRegistro = false;
+
+    // Toggle entre login y registro
+    toggleBtn.addEventListener('click', () => {
+        isRegistro = !isRegistro;
+        submitBtn.textContent = isRegistro ? 'Registrarse' : 'Iniciar Sesión';
+        toggleBtn.textContent = isRegistro ? 'Ya tengo cuenta' : 'Registrarse';
+        errorMsg.textContent = '';
+        successMsg.textContent = '';
+    });
+
+    // Manejar formulario
+    authForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email')?.value;
+        const password = document.getElementById('password')?.value;
+
+        if (!email || !password) {
+            errorMsg.textContent = 'Por favor, completa todos los campos.';
+            return;
+        }
+
+        errorMsg.textContent = '';
+        successMsg.textContent = '';
+
+        try {
+            if (isRegistro) {
+                await createUserWithEmailAndPassword(auth, email, password);
+                successMsg.textContent = '¡Registro exitoso! Redirigiendo...';
+            } else {
+                await signInWithEmailAndPassword(auth, email, password);
+                successMsg.textContent = '¡Inicio de sesión exitoso! Redirigiendo...';
+            }
+            setTimeout(() => {
+                window.location.href = 'feed.html';
+            }, 1000);
+        } catch (error) {
+            let errorMessage = error.message;
+            if (error.code === 'auth/email-already-in-use') {
+                errorMessage = 'El correo ya está registrado. Intenta con otro.';
+            } else if (error.code === 'auth/invalid-email') {
+                errorMessage = 'El correo no es válido.';
+            } else if (error.code === 'auth/weak-password') {
+                errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
+            } else if (error.code === 'auth/invalid-credential') {
+                errorMessage = 'Correo o contraseña incorrectos.';
+            }
+            errorMsg.textContent = errorMessage;
+        }
+    });
 });
 
-// Manejar el envío del formulario
-authForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const email = emailInput.value;
-    const password = passwordInput.value;
-
-    if (isLoginMode) {
-        // Iniciar sesión
-        signInWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                successMsg.textContent = '¡Inicio de sesión exitoso!';
-                errorMsg.textContent = '';
-                // Redirigir a una página después del login (por ejemplo, dashboard.html)
-                window.location.href = 'dashboard.html';
-            })
-            .catch((error) => {
-                errorMsg.textContent = traducirError(error.code);
-                successMsg.textContent = '';
-            });
-    } else {
-        // Registrarse
-        createUserWithEmailAndPassword(auth, email, password)
-            .then((userCredential) => {
-                successMsg.textContent = '¡Registro exitoso! Ahora inicia sesión.';
-                errorMsg.textContent = '';
-                isLoginMode = true;
-                submitBtn.textContent = 'Iniciar Sesión';
-                toggleRegistro.textContent = 'Registrarse';
-            })
-            .catch((error) => {
-                errorMsg.textContent = traducirError(error.code);
-                successMsg.textContent = '';
-            });
+// Verificar estado de autenticación
+onAuthStateChanged(auth, (user) => {
+    if (user && window.location.pathname !== '/feed.html') {
+    if (user && window.location.pathname.endsWith('login.html')) {
+        window.location.href = 'feed.html';
     }
 });
-
-// Función para traducir códigos de error de Firebase a mensajes en español
-function traducirError(code) {
-    switch (code) {
-        case 'auth/invalid-email':
-            return 'El correo electrónico no es válido.';
-        case 'auth/user-not-found':
-            return 'No se encontró un usuario con este correo.';
-        case 'auth/wrong-password':
-            return 'La contraseña es incorrecta.';
-        case 'auth/email-already-in-use':
-            return 'El correo electrónico ya está registrado.';
-        case 'auth/weak-password':
-            return 'La contraseña debe tener al menos 6 caracteres.';
-        default:
-            return 'Ocurrió un error: ' + code;
-    }
-}
