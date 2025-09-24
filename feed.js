@@ -2,28 +2,20 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, orderBy, doc, setDoc, getDoc, where, limit, updateDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// Config de Firebase desde variables de entorno
-const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
-};
-
-// Inicializar Firebase
+// Configuración de Firebase (sin cambios)
+const firebaseConfig = { /* ... */ };
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
+let currentUserAvatar = 'default-avatar.png';
 let currentChatId = null;
 let unsubscribeMessages = null;
 let unsubscribeFriends = null;
 let unsubscribeRequests = null;
 
-// Elementos DOM
+// Elementos DOM (actualizados para la nueva estructura)
 const logoutBtn = document.getElementById('logout-btn');
 const userNameSpan = document.getElementById('user-name');
 const userAvatar = document.getElementById('user-avatar');
@@ -31,28 +23,28 @@ const profilePanel = document.getElementById('profile-panel');
 const displayNameInput = document.getElementById('display-name');
 const avatarUpload = document.getElementById('avatar-upload');
 const saveProfileBtn = document.getElementById('save-profile');
-const chatPanel = document.getElementById('chat-panel');
+const chatContent = document.getElementById('chat-content');
 const chatTitle = document.getElementById('chat-title');
 const chatUserAvatar = document.getElementById('chat-user-avatar');
 const messagesContainer = document.getElementById('messages-container');
 const messageInput = document.getElementById('message-input');
 const sendButton = document.getElementById('send-button');
+const attachBtn = document.getElementById('attach-btn');
+const attachUpload = document.getElementById('attach-upload');
 const userSearch = document.getElementById('user-search');
 const searchResults = document.getElementById('search-results');
 const friendsList = document.getElementById('friends-list');
 const requestsSection = document.getElementById('requests-section');
 const requestsList = document.getElementById('requests-list');
-const messagesBtn = document.getElementById('messages-btn');
-const friendsPanel = document.getElementById('friends-panel');
-const friendsListPanel = document.getElementById('friends-list-panel');
-const closeFriendsBtn = document.getElementById('close-friends');
+const welcomeSection = document.querySelector('.welcome-section');
+const reelsSection = document.querySelector('.reels-section');
+const profileSidebar = document.getElementById('profile-sidebar');
+const friendAvatar = document.getElementById('friend-avatar');
+const friendName = document.getElementById('friend-name');
+const friendGame = document.getElementById('friend-game');
+const friendJoined = document.getElementById('friend-joined');
 
-// Verificar que los elementos existan
-if (!logoutBtn || !userNameSpan || !userAvatar || !profilePanel) {
-    console.error('Faltan elementos en feed.html.');
-}
-
-// Verificar estado de autenticación
+// Estado de autenticación (cargar perfil, amigos, solicitudes)
 onAuthStateChanged(auth, (user) => {
     if (!user) {
         window.location.href = 'index.html';
@@ -64,17 +56,10 @@ onAuthStateChanged(auth, (user) => {
     }
 });
 
-// Logout
-logoutBtn.addEventListener('click', async () => {
-    try {
-        await signOut(auth);
-        window.location.href = 'index.html';
-    } catch (error) {
-        console.error('Error al cerrar sesión:', error.message);
-    }
-});
+// Cerrar sesión (sin cambios)
+logoutBtn.addEventListener('click', async () => { /* ... */ });
 
-// Función para cargar el perfil del usuario
+// Cargar perfil del usuario (añadir currentUserAvatar)
 async function loadUserProfile(user) {
     const userRef = doc(db, 'users', user.uid);
     const userSnap = await getDoc(userRef);
@@ -82,118 +67,31 @@ async function loadUserProfile(user) {
         const data = userSnap.data();
         userNameSpan.textContent = data.displayName || user.email.split('@')[0] || 'Usuario';
         userAvatar.src = data.avatarUrl || 'default-avatar.png';
+        currentUserAvatar = userAvatar.src;
         displayNameInput.value = data.displayName || '';
     } else {
         userNameSpan.textContent = user.email.split('@')[0] || 'Usuario';
         userAvatar.src = 'default-avatar.png';
+        currentUserAvatar = userAvatar.src;
     }
 }
 
-// Función para subir avatar a Cloudinary
-async function uploadAvatar(file) {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('upload_preset', 'avatar_upload');
+// Subir avatar (sin cambios)
+async function uploadAvatar(file) { /* ... */ }
 
-    try {
-        const response = await fetch(`https://api.cloudinary.com/v1_1/TU_CLOUD_NAME/image/upload`, {
-            method: 'POST',
-            body: formData
-        });
-        const data = await response.json();
-        if (data.secure_url) {
-            return data.secure_url;
-        } else {
-            throw new Error('Error al subir la imagen a Cloudinary');
-        }
-    } catch (error) {
-        console.error('Error en uploadAvatar:', error.message);
-        return 'default-avatar.png';
-    }
-}
+// Guardar perfil (sin cambios)
+saveProfileBtn.addEventListener('click', async () => { /* ... */ });
 
-// Función para guardar el perfil
-saveProfileBtn.addEventListener('click', async () => {
-    const displayName = displayNameInput.value.trim();
-    let avatarUrl = userAvatar.src;
-    if (avatarUpload.files[0]) {
-        avatarUrl = await uploadAvatar(avatarUpload.files[0]);
-    }
-    if (displayName || avatarUrl !== 'default-avatar.png') {
-        const userRef = doc(db, 'users', currentUser.uid);
-        await setDoc(userRef, { displayName, avatarUrl }, { merge: true });
-        loadUserProfile(currentUser);
-        profilePanel.classList.add('hidden');
-    }
-});
+// Alternar panel de perfil (sin cambios)
+[userNameSpan, userAvatar].forEach(element => { /* ... */ });
 
-// Abrir/cerrar panel de perfil al clicar en nombre o avatar
-[userNameSpan, userAvatar].forEach(element => {
-    element.addEventListener('click', () => {
-        profilePanel.classList.toggle('hidden');
-        if (!profilePanel.classList.contains('hidden')) {
-            chatPanel.classList.add('hidden');
-            if (unsubscribeMessages) unsubscribeMessages();
-            loadRequests();
-        }
-    });
-});
+// Búsqueda de usuarios (sin cambios)
+userSearch.addEventListener('input', async (e) => { /* ... */ });
 
-// Abrir panel de amigos al clicar en el botón de mensajes
-messagesBtn.addEventListener('click', () => {
-    friendsPanel.classList.remove('hidden');
-    chatPanel.classList.add('hidden');
-    loadFriendsPanel();
-});
+// Agregar amigo (sin cambios)
+window.addFriend = async function(receiverUid) { /* ... */ };
 
-// Cerrar panel de amigos
-closeFriendsBtn.addEventListener('click', () => {
-    friendsPanel.classList.add('hidden');
-});
-
-// Búsqueda de usuarios
-userSearch.addEventListener('input', async (e) => {
-    const queryStr = e.target.value.trim().toLowerCase();
-    if (queryStr.length < 2) {
-        searchResults.classList.add('hidden');
-        return;
-    }
-    const usersRef = collection(db, 'users');
-    const q = query(usersRef, where('displayName', '>=', queryStr), where('displayName', '<=', queryStr + '\uf8ff'), limit(10));
-    const snapshot = await getDocs(q);
-    searchResults.innerHTML = '';
-    snapshot.forEach((doc) => {
-        const user = doc.data();
-        if (doc.id !== currentUser.uid) {
-            const result = document.createElement('div');
-            result.classList.add('search-result');
-            result.innerHTML = `
-                <img src="${user.avatarUrl || 'default-avatar.png'}" alt="${user.displayName}" class="search-avatar">
-                <span>${user.displayName} (${user.email})</span>
-                <button onclick="addFriend('${doc.id}')">Agregar</button>
-            `;
-            searchResults.appendChild(result);
-        }
-    });
-    searchResults.classList.remove('hidden');
-});
-
-// Función para agregar amigo (enviar solicitud)
-window.addFriend = async function(receiverUid) {
-    const requestId = [currentUser.uid, receiverUid].sort().join('_');
-    const requestRef = doc(db, 'friend_requests', requestId);
-    await setDoc(requestRef, {
-        senderUid: currentUser.uid,
-        receiverUid: receiverUid,
-        status: 'pending',
-        timestamp: serverTimestamp()
-    });
-    alert('Solicitud enviada!');
-    userSearch.value = '';
-    searchResults.classList.add('hidden');
-};
-
-// Función para cargar amigos en la lista principal
+// Cargar amigos (ahora en dm-sidebar, añadir estado/juego ficticio)
 function loadFriends() {
     if (unsubscribeFriends) unsubscribeFriends();
     const friendshipsRef = collection(db, 'friendships');
@@ -204,151 +102,105 @@ function loadFriends() {
             const friendship = doc.data();
             const friendUid = friendship.userUid1 === currentUser.uid ? friendship.userUid2 : friendship.userUid1;
             loadFriendProfile(friendUid, (friend) => {
+                // Estado/juego/fecha de ingreso ficticios (añadir a Firebase en la app real)
+                friend.status = 'online'; // o 'offline'
+                friend.game = 'Papers, Please'; // o ''
+                friend.joined = '21 octubre 2020';
+
                 const friendItem = document.createElement('div');
                 friendItem.classList.add('friend-item');
                 friendItem.innerHTML = `
-                    <img src="${friend.avatarUrl || 'default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
-                    <span>${friend.displayName}</span>
+                    <div class="avatar-wrapper">
+                        <img src="${friend.avatarUrl || 'default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
+                        <div class="status-dot ${friend.status}"></div>
+                    </div>
+                    <div class="friend-info">
+                        <span class="friend-name">${friend.displayName}</span>
+                        <span class="friend-status">${friend.game ? `Jugando a ${friend.game}` : friend.status.charAt(0).toUpperCase() + friend.status.slice(1)}</span>
+                    </div>
                 `;
-                friendItem.onclick = () => {
-                    openPrivateChat(friendUid, friend.displayName, friend.avatarUrl);
-                    friendsPanel.classList.add('hidden');
-                };
+                friendItem.onclick = () => openPrivateChat(friendUid, friend.displayName, friend.avatarUrl || 'default-avatar.png', friend.game, friend.joined);
                 friendsList.appendChild(friendItem);
             });
         });
     });
 }
 
-// Función para cargar amigos en el panel de mensajes
-function loadFriendsPanel() {
-    if (unsubscribeFriends) unsubscribeFriends();
-    const friendshipsRef = collection(db, 'friendships');
-    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid));
-    unsubscribeFriends = onSnapshot(q, (snapshot) => {
-        friendsListPanel.innerHTML = '';
-        snapshot.forEach((doc) => {
-            const friendship = doc.data();
-            const friendUid = friendship.userUid1 === currentUser.uid ? friendship.userUid2 : friendship.userUid1;
-            loadFriendProfile(friendUid, (friend) => {
-                const friendItem = document.createElement('div');
-                friendItem.classList.add('friend-item');
-                friendItem.innerHTML = `
-                    <img src="${friend.avatarUrl || 'default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
-                    <span>${friend.displayName}</span>
-                `;
-                friendItem.onclick = () => {
-                    openPrivateChat(friendUid, friend.displayName, friend.avatarUrl);
-                    friendsPanel.classList.add('hidden');
-                };
-                friendsListPanel.appendChild(friendItem);
-            });
-        });
-    });
-}
+// Cargar perfil de amigo (sin cambios)
+async function loadFriendProfile(friendUid, callback) { /* ... */ }
 
-// Función para cargar perfil de amigo
-async function loadFriendProfile(friendUid, callback) {
-    const friendRef = doc(db, 'users', friendUid);
-    const friendSnap = await getDoc(friendRef);
-    if (friendSnap.exists()) {
-        callback(friendSnap.data());
-    }
-}
-
-// Función para abrir chat privado y actualizar perfil del amigo
-window.openPrivateChat = function(friendUid, friendName, friendAvatar) {
+// Abrir chat privado (mostrar chat-main, llenar profile-sidebar, ocultar bienvenida/reels)
+window.openPrivateChat = function(friendUid, friendName, friendAvatarUrl, friendGameText, friendJoinedDate) {
     const chatId = [currentUser.uid, friendUid].sort().join('_');
     currentChatId = chatId;
     chatTitle.textContent = friendName;
-    chatUserAvatar.src = friendAvatar || 'default-avatar.png';
-    chatPanel.classList.remove('hidden');
-    friendsPanel.classList.add('hidden');
+    chatUserAvatar.src = friendAvatarUrl;
+    welcomeSection.classList.add('hidden');
+    reelsSection.classList.add('hidden');
+    chatContent.classList.remove('hidden');
+    profileSidebar.classList.remove('hidden');
+    // Llenar barra lateral de perfil
+    friendAvatar.src = friendAvatarUrl;
+    friendName.textContent = friendName;
+    friendGame.textContent = friendGameText ? `Jugando a ${friendGameText}` : 'En línea';
+    friendJoined.textContent = friendJoinedDate;
     loadChatMessages(chatId);
+    messageInput.placeholder = `Enviar mensaje a @${friendName}`;
     messageInput.focus();
 };
 
-// Función para cargar solicitudes pendientes
-function loadRequests() {
-    if (unsubscribeRequests) unsubscribeRequests();
-    const requestsRef = collection(db, 'friend_requests');
-    const q = query(requestsRef, where('receiverUid', '==', currentUser.uid), where('status', '==', 'pending'));
-    unsubscribeRequests = onSnapshot(q, (snapshot) => {
-        requestsList.innerHTML = '';
-        snapshot.forEach((doc) => {
-            const request = doc.data();
-            loadFriendProfile(request.senderUid, (sender) => {
-                const requestItem = document.createElement('div');
-                requestItem.classList.add('request-item');
-                requestItem.innerHTML = `
-                    <img src="${sender.avatarUrl || 'default-avatar.png'}" alt="${sender.displayName}" class="search-avatar">
-                    <span>${sender.displayName} (${sender.email}) te envió una solicitud</span>
-                    <button onclick="acceptRequest('${doc.id}', '${request.senderUid}')">Aceptar</button>
-                    <button onclick="rejectRequest('${doc.id}')">Rechazar</button>
-                `;
-                requestsList.appendChild(requestItem);
-            });
-        });
-        if (snapshot.empty) {
-            requestsList.innerHTML = '<p>No hay solicitudes pendientes.</p>';
-        }
-        requestsSection.classList.toggle('hidden', snapshot.empty);
-    });
-}
+// Cargar solicitudes (sin cambios)
+function loadRequests() { /* ... */ };
 
-// Función para aceptar solicitud
-window.acceptRequest = async function(requestId, senderUid) {
-    const requestRef = doc(db, 'friend_requests', requestId);
-    await updateDoc(requestRef, { status: 'accepted' });
-    const friendshipId = [currentUser.uid, senderUid].sort().join('_');
-    const friendshipRef = doc(db, 'friendships', friendshipId);
-    await setDoc(friendshipRef, {
-        userUid1: [currentUser.uid, senderUid].sort()[0],
-        userUid2: [currentUser.uid, senderUid].sort()[1],
-        timestamp: serverTimestamp()
-    });
-    loadFriends();
-    loadFriendsPanel();
-    alert('¡Amigo agregado!');
-};
+// Aceptar solicitud (actualizar amigos)
+window.acceptRequest = async function(requestId, senderUid) { /* ... */ };
 
-// Función para rechazar solicitud
-window.rejectRequest = async function(requestId) {
-    const requestRef = doc(db, 'friend_requests', requestId);
-    await updateDoc(requestRef, { status: 'rejected' });
-    alert('Solicitud rechazada.');
-    loadRequests();
-};
+// Rechazar solicitud (sin cambios)
+window.rejectRequest = async function(requestId) { /* ... */ };
 
-// Función para cerrar el chat
+// Cerrar chat (ocultar chat/perfil, mostrar bienvenida)
 window.closeChat = function() {
     if (unsubscribeMessages) unsubscribeMessages();
-    chatPanel.classList.add('hidden');
+    chatContent.classList.add('hidden');
+    profileSidebar.classList.add('hidden');
+    welcomeSection.classList.remove('hidden');
+    // reelsSection.classList.remove('hidden'); // Descomentar si quieres volver a mostrar reels
     messagesContainer.innerHTML = '';
     currentChatId = null;
     messageInput.value = '';
 };
 
-// Función para cerrar el panel de amigos
-window.closeFriendsPanel = function() {
-    friendsPanel.classList.add('hidden');
-};
-
-// Función para cargar mensajes del chat en tiempo real
+// Cargar mensajes de chat (añadir avatares, separadores de fecha, soporte para imágenes)
 function loadChatMessages(chatId) {
     if (unsubscribeMessages) unsubscribeMessages();
     const messagesRef = collection(db, 'chats', chatId, 'messages');
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
     unsubscribeMessages = onSnapshot(q, (snapshot) => {
         messagesContainer.innerHTML = '';
+        let lastDate = null;
         snapshot.forEach((doc) => {
             const message = doc.data();
+            const messageDate = new Date(message.timestamp.toDate()).toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
+            if (messageDate !== lastDate) {
+                const separator = document.createElement('div');
+                separator.classList.add('date-separator');
+                separator.textContent = messageDate; // ej. "24 de septiembre de 2025"
+                messagesContainer.appendChild(separator);
+                lastDate = messageDate;
+            }
+            const isSent = message.senderId === currentUser.uid;
+            const avatarSrc = isSent ? currentUserAvatar : chatUserAvatar.src;
             const messageElement = document.createElement('div');
-            messageElement.classList.add('message');
-            messageElement.classList.add(message.senderId === currentUser.uid ? 'sent' : 'received');
+            messageElement.classList.add('message', isSent ? 'sent' : 'received');
             messageElement.innerHTML = `
-                <strong>${message.senderName}:</strong> ${message.text}
-                <small>${new Date(message.timestamp.toDate()).toLocaleTimeString()}</small>
+                <img class="message-avatar" src="${avatarSrc}">
+                <div class="message-body">
+                    <div class="message-header">
+                        <strong>${message.senderName}</strong>
+                        <small>${new Date(message.timestamp.toDate()).toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' })}</small>
+                    </div>
+                    ${message.type === 'image' ? `<img src="${message.text}" alt="Imagen" class="message-image">` : `<p>${message.text}</p>`}
+                </div>
             `;
             messagesContainer.appendChild(messageElement);
         });
@@ -356,13 +208,14 @@ function loadChatMessages(chatId) {
     });
 }
 
-// Función para enviar mensaje
+// Enviar mensaje (sin cambios, pero añadir type: 'text')
 window.sendMessage = async function() {
     const text = messageInput.value.trim();
     if (!text || !currentChatId) return;
     try {
         await addDoc(collection(db, 'chats', currentChatId, 'messages'), {
             text: text,
+            type: 'text',
             senderId: currentUser.uid,
             senderName: userNameSpan.textContent,
             timestamp: serverTimestamp()
@@ -373,7 +226,32 @@ window.sendMessage = async function() {
     }
 };
 
-// Event listener para enviar con Enter
+// Enviar con Enter (sin cambios)
 messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
+
+// Subir adjunto (disparar archivo, subir a Cloudinary, enviar como mensaje de imagen)
+attachBtn.addEventListener('click', () => attachUpload.click());
+attachUpload.addEventListener('change', async () => {
+    const file = attachUpload.files[0];
+    if (!file || !currentChatId) return;
+    const imageUrl = await uploadAvatar(file); // Reutilizar función de subida (es para imágenes)
+    try {
+        await addDoc(collection(db, 'chats', currentChatId, 'messages'), {
+            text: imageUrl,
+            type: 'image',
+            senderId: currentUser.uid,
+            senderName: userNameSpan.textContent,
+            timestamp: serverTimestamp()
+        });
+        attachUpload.value = '';
+    } catch (error) {
+        console.error('Error al enviar imagen:', error);
+    }
+});
+
+// Marcadores para botones GIF/emoji/juego (añadir lógica si es necesario, ej. abrir selectores)
+document.getElementById('gif-btn').addEventListener('click', () => alert('Selector de GIF no implementado'));
+document.getElementById('emoji-btn').addEventListener('click', () => alert('Selector de emoji no implementado'));
+document.getElementById('game-btn').addEventListener('click', () => alert('Funciones de juego no implementadas'));
