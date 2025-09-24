@@ -3,104 +3,101 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>RedSocial🎮 - Feed</title>
+    <title>Feed Social</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <header>
-        <div class="logo">RedSocial🎮</div>
+        <div class="logo">SocialApp</div>
         <div class="icons">
-            <button id="notifications-btn">🔔</button>
-            <button id="profile-btn" disabled>👤</button>
-            <button id="logout-btn">Cerrar Sesión</button>
+            <button id="logout-btn">✖</button>
         </div>
     </header>
-    <main class="dashboard">
-        <aside class="servers-sidebar">
+
+    <div class="dashboard">
+        <div class="servers-sidebar" id="servers-sidebar">
             <div class="servers-list">
-                <div class="server-icon" data-chat-id="general" onclick="selectChat(this)" title="Servidor General">🌟</div>
-                <div class="server-icon" data-chat-id="juegos" onclick="selectChat(this)" title="Juegos">🎮</div>
+                <!-- Servidores se cargarán dinámicamente -->
             </div>
-        </aside>
-        <aside class="dm-sidebar">
-            <h2>Mensajes Directos</h2>
+        </div>
+
+        <div class="dm-sidebar" id="dm-sidebar">
             <div class="search-section">
-                <input type="text" id="user-search" placeholder="Buscar usuarios...">
+                <input type="text" id="user-search" placeholder="Buscar amigos...">
+                <div id="search-results" class="search-results"></div>
             </div>
-            <div id="search-results" class="search-results hidden"></div>
-            <div id="friends-list" class="friends-list">
-                <!-- Amigos se cargan dinámicamente -->
+            <h2>Amigos</h2>
+            <div id="friends-list" class="friends-list"></div>
+            <div id="requests-section" class="requests-section">
+                <h2>Solicitudes</h2>
+                <div id="requests-list" class="requests-list"></div>
             </div>
-            <div class="requests-section hidden" id="requests-section">
-                <h3>Solicitudes Pendientes</h3>
-                <div id="requests-list"></div>
-            </div>
-        </aside>
-        <section class="chat-main">
-            <div class="welcome-section">
-                <h1>¡Bienvenido, <span id="user-name" class="clickable">Usuario</span>!</h1>
-                <img id="user-avatar" src="default-avatar.png" alt="Avatar" class="user-avatar clickable">
-                <p>Explora tu comunidad gamer y disfruta del contenido.</p>
-            </div>
-            <div id="profile-panel" class="profile-panel hidden">
-                <h3>Personalizar Perfil</h3>
-                <label for="display-name">Nombre de Usuario:</label>
-                <input type="text" id="display-name" placeholder="Tu nombre">
-                <label for="avatar-upload">Avatar:</label>
-                <input type="file" id="avatar-upload" accept="image/*">
-                <button id="save-profile">Guardar</button>
-                <div class="requests-section">
-                    <h4>Solicitudes Pendientes</h4>
-                    <div id="requests-list"></div>
+        </div>
+
+        <div class="chat-main" id="chat-content" style="display: none;">
+            <div class="chat-header">
+                <div class="chat-user-profile">
+                    <img id="chat-user-avatar" class="chat-user-avatar" src="default-avatar.png" alt="Avatar">
+                    <h3 id="chat-title"></h3>
                 </div>
-            </div>
-            <div class="reels-section hidden">
-                <!-- Contenido de reels aquí, mantenido pero oculto por defecto -->
-            </div>
-            <div id="chat-content" class="chat-content hidden">
-                <div class="chat-header">
-                    <div class="chat-user-profile">
-                        <img id="chat-user-avatar" src="default-avatar.png" alt="Avatar" class="chat-user-avatar">
-                        <h3 id="chat-title">Chat con Amigos</h3>
-                    </div>
-                    <div class="chat-icons">
-                        <button>📞</button>
-                        <button>📹</button>
-                        <button>📌</button>
-                        <button>🔔</button>
-                        <button>🔍</button>
-                    </div>
-                    <button id="close-chat" onclick="closeChat()">✕</button>
-                </div>
-                <div id="messages-container" class="messages-container"></div>
-                <div class="message-input-container">
-                    <button id="attach-btn">+</button>
-                    <input type="file" id="attach-upload" accept="image/*" hidden>
-                    <button id="gif-btn">GIF</button>
-                    <button id="emoji-btn">😀</button>
+                <div class="chat-icons">
+                    <button id="close-chat" onclick="closeChat()">✖</button>
+                    <button id="gif-btn">🎥</button>
+                    <button id="emoji-btn">😄</button>
                     <button id="game-btn">🎮</button>
-                    <input type="text" id="message-input" placeholder="Enviar mensaje a @Amigo" maxlength="500">
-                    <button id="send-button" onclick="sendMessage()">Enviar</button>
                 </div>
             </div>
-        </section>
-        <aside id="profile-sidebar" class="profile-sidebar hidden">
-            <img id="friend-avatar" src="default-avatar.png" alt="Avatar" class="profile-avatar">
+            <div class="messages-container" id="messages-container"></div>
+            <div class="message-input-container">
+                <button id="attach-btn">+</button>
+                <input type="file" id="attach-upload" style="display: none;">
+                <input type="text" id="message-input" placeholder="Escribe un mensaje...">
+                <button id="send-button" onclick="sendMessage()">Enviar</button>
+            </div>
+        </div>
+
+        <div class="profile-sidebar" id="profile-sidebar" style="display: none;">
+            <img id="friend-avatar" class="profile-avatar" src="default-avatar.png" alt="Avatar">
             <h3 id="friend-name">Nombre</h3>
-            <p id="friend-game">Jugando a...</p>
-            <p>Miembro desde <span id="friend-joined"></span></p>
+            <p id="friend-game">En línea</p>
+            <p id="friend-joined">Fecha de ingreso</p>
             <div class="common-section">
-                <h4>Servidores en común — 1</h4>
-                <!-- Añadir servidores en común dinámicamente si es necesario -->
+                <h4>Servidores en común</h4>
+                <!-- Servidores en común se cargarán dinámicamente -->
             </div>
-            <div class="common-section">
-                <h4>Amigos en común — 2</h4>
-                <!-- Añadir amigos en común dinámicamente si es necesario -->
+            <button>Agregar amigo</button>
+        </div>
+
+        <div class="content">
+            <div class="welcome-section">
+                <img id="user-avatar" class="user-avatar clickable" src="default-avatar.png" alt="Avatar" onclick="profilePanel.classList.remove('hidden')">
+                <h1 id="user-name">Usuario</h1>
+                <p>Bienvenido a SocialApp. ¡Explora y conecta!</p>
+                <p class="clickable" onclick="reelsSection.classList.remove('hidden')">Ver Reels</p>
             </div>
-            <button>Ver perfil completo</button>
-        </aside>
-    </main>
-    <script type="module" src="feed.js"></script>
-    <script src="reel-interactions.js"></script>
+
+            <div class="reels-section" style="display: none;">
+                <!-- Reels se implementarán dinámicamente -->
+            </div>
+
+            <div id="profile-panel" class="profile-panel hidden">
+                <h3>Editar Perfil</h3>
+                <label for="display-name">Nombre de usuario:</label>
+                <input type="text" id="display-name">
+                <label for="avatar-upload">Foto de perfil:</label>
+                <input type="file" id="avatar-upload">
+                <button id="save-profile">Guardar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script para inyectar variables de Netlify -->
+    <script>
+        window.config = {
+            CLOUDINARY_CLOUD_NAME: "%CLOUDINARY_CLOUD_NAME%",
+            CLOUDINARY_UPLOAD_PRESET: "%CLOUDINARY_UPLOAD_PRESET%"
+        };
+    </script>
+    <script type="module" src="feed.js" defer></script>
 </body>
 </html>
