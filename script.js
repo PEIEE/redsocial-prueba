@@ -17,7 +17,7 @@ console.log('Firebase Config:', firebaseConfig);
 // Check for missing API key
 if (!firebaseConfig.apiKey) {
     console.error('Error: VITE_FIREBASE_API_KEY is missing. Check Netlify environment variables.');
-    document.getElementById('error-msg')?.textContent = 'Error de configuración. Contacta al administrador.';
+    document.getElementById('error-msg')?.textContent == 'Error de configuración. Contacta al administrador.';
     throw new Error('Missing Firebase API Key');
 }
 
@@ -106,3 +106,4 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = 'feed.html';
     }
 });
+
