@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Social Prueba - Login</title>
+    <link rel="stylesheet" href="style.css">
     <title>Red Social: ChatKlax - Login</title>
-    <script src="script.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             margin: 0;
@@ -121,6 +123,25 @@
     </style>
 </head>
 <body>
+    <header>
+        <div class="logo">RedSocial🎮</div>
+        <nav>
+            <a href="index.html">Inicio</a>
+            <a href="#">Soporte</a>
+            <a href="index.html" class="btn">Regresar</a>
+        </nav>
+    </header>
+    <main>
+        <div class="login-container">
+            <h1>Iniciar Sesión</h1>
+            <form id="auth-form">
+                <input type="email" id="email" placeholder="Email" required>
+                <input type="password" id="password" placeholder="Contraseña" required>
+                <button type="submit" id="submit-btn" class="btn primary">Iniciar Sesión</button>
+                <button type="button" id="toggle-registro" class="btn">Registrarse</button>
+            </form>
+            <p id="error-msg" style="color: #ff4d4d;"></p>
+            <p id="success-msg" style="color: #00cc00;"></p>
     <!-- Pantalla de login -->
     <div id="login-screen">
         <div class="flex justify-center items-center min-h-screen px-4">
@@ -138,6 +159,11 @@
                 </form>
             </div>
         </div>
+        <div class="decorations">
+            <div class="circle"></div>
+            <div class="character"></div>
+        </div>
+    </main>
         <div class="background-shapes"></div>
     </div>
     <script type="module" src="script.js"></script>
