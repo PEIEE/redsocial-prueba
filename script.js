@@ -1,7 +1,7 @@
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 
-// Firebase configuration using Netlify environment variables
+// Firebase configuration
 const firebaseConfig = {
     apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
     authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
@@ -11,9 +11,26 @@ const firebaseConfig = {
     appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
+// Debug: Log config
+console.log('Firebase Config:', firebaseConfig);
+
+// Check for missing API key
+if (!firebaseConfig.apiKey) {
+    console.error('Error: VITE_FIREBASE_API_KEY is missing. Check Netlify environment variables.');
+    document.getElementById('error-msg')?.textContent = 'Error de configuración. Contacta al administrador.';
+    throw new Error('Missing Firebase API Key');
+}
+
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+try {
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    console.log('Firebase initialized successfully');
+} catch (error) {
+    console.error('Firebase initialization failed:', error);
+    document.getElementById('error-msg')?.textContent = 'Error al conectar con Firebase. Contacta al administrador.';
+    throw error;
+}
 
 // DOM elements
 document.addEventListener('DOMContentLoaded', () => {
@@ -67,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 window.location.href = 'feed.html';
             }, 1000);
         } catch (error) {
+            console.error('Auth error:', error); // Debug
             let errorMessage = error.message;
             if (error.code === 'auth/email-already-in-use') {
                 errorMessage = 'El correo ya está registrado. Intenta con otro.';
