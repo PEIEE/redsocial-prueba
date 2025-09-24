@@ -13,15 +13,16 @@
             <button id="notifications-btn">🔔</button>
             <button id="profile-btn" disabled>👤</button>
             <button id="logout-btn">Cerrar Sesión</button>
-            <button id="messages-btn">💬</button> <!-- Nuevo botón de mensajes -->
         </div>
     </header>
     <main class="dashboard">
-        <aside class="sidebar">
+        <aside class="servers-sidebar">
             <div class="servers-list">
                 <div class="server-icon" data-chat-id="general" onclick="selectChat(this)" title="Servidor General">🌟</div>
                 <div class="server-icon" data-chat-id="juegos" onclick="selectChat(this)" title="Juegos">🎮</div>
             </div>
+        </aside>
+        <aside class="dm-sidebar">
             <h2>Mensajes Directos</h2>
             <div class="search-section">
                 <input type="text" id="user-search" placeholder="Buscar usuarios...">
@@ -35,7 +36,7 @@
                 <div id="requests-list"></div>
             </div>
         </aside>
-        <section class="content">
+        <section class="chat-main">
             <div class="welcome-section">
                 <h1>¡Bienvenido, <span id="user-name" class="clickable">Usuario</span>!</h1>
                 <img id="user-avatar" src="default-avatar.png" alt="Avatar" class="user-avatar clickable">
@@ -53,67 +54,51 @@
                     <div id="requests-list"></div>
                 </div>
             </div>
-            <div class="reels-section">
-                <h2>Reels</h2>
-                <div class="reels-wrapper">
-                    <div class="reel-item active">
-                        <video src="reel1.mp4" loop>
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="reel-controls">
-                            <button class="reel-button like-btn" onclick="toggleLike(this)">
-                                ❤️ <span class="like-count">0</span>
-                            </button>
-                            <button class="reel-button follow-btn" onclick="toggleFollow(this)">Seguir</button>
-                            <button class="reel-button share-btn" onclick="shareReel(this)">Compartir</button>
-                        </div>
-                        <p class="reel-caption">Reel de prueba 1</p>
-                    </div>
-                    <div class="reel-item">
-                        <video src="reel2.mp4" loop>
-                            Tu navegador no soporta videos.
-                        </video>
-                        <div class="reel-controls">
-                            <button class="reel-button like-btn" onclick="toggleLike(this)">
-                                ❤️ <span class="like-count">0</span>
-                            </button>
-                            <button class="reel-button follow-btn" onclick="toggleFollow(this)">Seguir</button>
-                            <button class="reel-button share-btn" onclick="shareReel(this)">Compartir</button>
-                        </div>
-                        <p class="reel-caption">Reel de prueba 2</p>
-                    </div>
-                </div>
-                <button class="nav-button prev-btn" onclick="navigateReel(-1)">⬅️ Anterior</button>
-                <button class="nav-button next-btn" onclick="navigateReel(1)">Siguiente ➡️</button>
+            <div class="reels-section hidden">
+                <!-- Contenido de reels aquí, mantenido pero oculto por defecto -->
             </div>
-            <!-- Panel de Chat Privado -->
-            <div id="chat-panel" class="chat-panel hidden">
+            <div id="chat-content" class="chat-content hidden">
                 <div class="chat-header">
                     <div class="chat-user-profile">
                         <img id="chat-user-avatar" src="default-avatar.png" alt="Avatar" class="chat-user-avatar">
                         <h3 id="chat-title">Chat con Amigos</h3>
                     </div>
+                    <div class="chat-icons">
+                        <button>📞</button>
+                        <button>📹</button>
+                        <button>📌</button>
+                        <button>🔔</button>
+                        <button>🔍</button>
+                    </div>
                     <button id="close-chat" onclick="closeChat()">✕</button>
                 </div>
                 <div id="messages-container" class="messages-container"></div>
                 <div class="message-input-container">
-                    <input type="text" id="message-input" placeholder="Escribe un mensaje..." maxlength="500">
+                    <button id="attach-btn">+</button>
+                    <input type="file" id="attach-upload" accept="image/*" hidden>
+                    <button id="gif-btn">GIF</button>
+                    <button id="emoji-btn">😀</button>
+                    <button id="game-btn">🎮</button>
+                    <input type="text" id="message-input" placeholder="Enviar mensaje a @Amigo" maxlength="500">
                     <button id="send-button" onclick="sendMessage()">Enviar</button>
                 </div>
             </div>
-            <!-- Panel de Lista de Amigos -->
-            <div id="friends-panel" class="friends-panel hidden">
-                <div class="friends-header">
-                    <h3>Mensajes Directos</h3>
-                    <button id="close-friends" onclick="closeFriendsPanel()">✕</button>
-                </div>
-                <div id="friends-content" class="friends-content">
-                    <div id="friends-list-panel" class="friends-list">
-                        <!-- Amigos se cargan dinámicamente -->
-                    </div>
-                </div>
-            </div>
         </section>
+        <aside id="profile-sidebar" class="profile-sidebar hidden">
+            <img id="friend-avatar" src="default-avatar.png" alt="Avatar" class="profile-avatar">
+            <h3 id="friend-name">Nombre</h3>
+            <p id="friend-game">Jugando a...</p>
+            <p>Miembro desde <span id="friend-joined"></span></p>
+            <div class="common-section">
+                <h4>Servidores en común — 1</h4>
+                <!-- Añadir servidores en común dinámicamente si es necesario -->
+            </div>
+            <div class="common-section">
+                <h4>Amigos en común — 2</h4>
+                <!-- Añadir amigos en común dinámicamente si es necesario -->
+            </div>
+            <button>Ver perfil completo</button>
+        </aside>
     </main>
     <script type="module" src="feed.js"></script>
     <script src="reel-interactions.js"></script>
