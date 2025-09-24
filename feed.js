@@ -2,21 +2,23 @@ import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getAuth, onAuthStateChanged, signOut } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, query, orderBy, doc, setDoc, getDoc, where, limit, updateDoc, getDocs } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-// Configuración de Firebase usando variables de entorno
+// Configuración de Firebase usando variables de entorno (inyectadas por Netlify)
+console.log('Cargando variables de entorno...');
 const firebaseConfig = {
-    apiKey: process.env.FIREBASE_API_KEY,
-    authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-    projectId: process.env.FIREBASE_PROJECT_ID,
-    storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-    appId: process.env.FIREBASE_APP_ID
+    apiKey: "%FIREBASE_API_KEY%",
+    authDomain: "%FIREBASE_AUTH_DOMAIN%",
+    projectId: "%FIREBASE_PROJECT_ID%",
+    storageBucket: "%FIREBASE_STORAGE_BUCKET%",
+    messagingSenderId: "%FIREBASE_MESSAGING_SENDER_ID%",
+    appId: "%FIREBASE_APP_ID%"
 };
+console.log('Firebase Config:', firebaseConfig);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
-let currentUserAvatar = '/default-avatar.png'; // Ruta ajustada
+let currentUserAvatar = 'https://via.placeholder.com/50'; // Fallback por el 404
 let currentChatId = null;
 let unsubscribeMessages = null;
 let unsubscribeFriends = null;
@@ -57,6 +59,7 @@ onAuthStateChanged(auth, (user) => {
         window.location.href = 'index.html';
     } else {
         currentUser = user;
+        console.log('Usuario autenticado:', user.uid);
         loadUserProfile(user);
         loadFriends();
         loadRequests();
@@ -77,52 +80,72 @@ logoutBtn.addEventListener('click', async () => {
 async function loadUserProfile(user) {
     const userRef = doc(db, 'users', user.uid);
     const userSnap = await getDoc(userRef);
+    console.log('Cargando perfil del usuario:', user.uid);
     if (userSnap.exists()) {
         const data = userSnap.data();
         userNameSpan.textContent = data.displayName || user.email.split('@')[0] || 'Usuario';
-        userAvatar.src = data.avatarUrl || '/default-avatar.png';
+        userAvatar.src = data.avatarUrl || 'https://via.placeholder.com/50';
         currentUserAvatar = userAvatar.src;
         displayNameInput.value = data.displayName || '';
+        console.log('Perfil cargado:', { displayName: userNameSpan.textContent, avatarUrl: userAvatar.src });
     } else {
         userNameSpan.textContent = user.email.split('@')[0] || 'Usuario';
-        userAvatar.src = '/default-avatar.png';
+        userAvatar.src = 'https://via.placeholder.com/50';
         currentUserAvatar = userAvatar.src;
+        console.log('Perfil no encontrado, usando valores por defecto');
     }
 }
 
 // Subir avatar
 async function uploadAvatar(file) {
+    console.log('Subiendo avatar a Cloudinary...');
     const formData = new FormData();
     formData.append('file', file);
-    formData.append('upload_preset', process.env.CLOUDINARY_UPLOAD_PRESET);
+    formData.append('upload_preset', window.config.CLOUDINARY_UPLOAD_PRESET || 'missing_preset');
 
-    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${window.config.CLOUDINARY_CLOUD_NAME || 'missing_cloud'}/image/upload`, {
         method: 'POST',
         body: formData,
     });
     const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
+    if (data.error) {
+        console.error('Error en Cloudinary:', data.error);
+        throw new Error(data.error.message || 'Error desconocido al subir la imagen');
+    }
+    console.log('Avatar subido con éxito:', data.secure_url);
     return data.secure_url;
 }
 
-// Guardar perfil (actualizado para manejar el avatar)
+// Guardar perfil
 saveProfileBtn.addEventListener('click', async () => {
+    console.log('Guardando perfil...');
     const displayName = displayNameInput.value.trim();
     const file = avatarUpload.files[0];
     let avatarUrl = currentUserAvatar;
 
     if (file) {
-        avatarUrl = await uploadAvatar(file);
+        try {
+            avatarUrl = await uploadAvatar(file);
+        } catch (error) {
+            console.error('Error al subir el avatar:', error.message);
+            alert('Error al subir el avatar: ' + error.message);
+            return;
+        }
     }
 
     const userRef = doc(db, 'users', currentUser.uid);
-    await setDoc(userRef, {
-        displayName: displayName || userNameSpan.textContent,
-        avatarUrl: avatarUrl,
-        email: currentUser.email,
-    }, { merge: true });
-
-    loadUserProfile(currentUser);
+    try {
+        await setDoc(userRef, {
+            displayName: displayName || userNameSpan.textContent,
+            avatarUrl: avatarUrl,
+            email: currentUser.email,
+        }, { merge: true });
+        console.log('Perfil guardado con éxito');
+        loadUserProfile(currentUser);
+    } catch (error) {
+        console.error('Error al guardar en Firebase:', error);
+        alert('Error al guardar el perfil: ' + error.message);
+    }
     profilePanel.classList.add('hidden');
 });
 
@@ -145,7 +168,7 @@ userSearch.addEventListener('input', async (e) => {
         if (user.uid !== currentUser.uid) {
             const result = document.createElement('div');
             result.classList.add('search-result');
-            result.innerHTML = `<img src="${user.avatarUrl || '/default-avatar.png'}" class="search-avatar" alt="${user.displayName}"><span>${user.displayName}</span>`;
+            result.innerHTML = `<img src="${user.avatarUrl || 'https://via.placeholder.com/50'}" class="search-avatar" alt="${user.displayName}"><span>${user.displayName}</span>`;
             result.onclick = () => addFriend(user.uid);
             searchResults.appendChild(result);
         }
@@ -184,7 +207,7 @@ function loadFriends() {
                 friendItem.classList.add('friend-item');
                 friendItem.innerHTML = `
                     <div class="avatar-wrapper">
-                        <img src="${friend.avatarUrl || '/default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
+                        <img src="${friend.avatarUrl || 'https://via.placeholder.com/50'}" alt="${friend.displayName}" class="friend-avatar">
                         <div class="status-dot ${friend.status}"></div>
                     </div>
                     <div class="friend-info">
@@ -192,7 +215,7 @@ function loadFriends() {
                         <span class="friend-status">${friend.game ? `Jugando a ${friend.game}` : friend.status.charAt(0).toUpperCase() + friend.status.slice(1)}</span>
                     </div>
                 `;
-                friendItem.onclick = () => openPrivateChat(friendUid, friend.displayName, friend.avatarUrl || '/default-avatar.png', friend.game, friend.joined);
+                friendItem.onclick = () => openPrivateChat(friendUid, friend.displayName, friend.avatarUrl || 'https://via.placeholder.com/50', friend.game, friend.joined);
                 friendsList.appendChild(friendItem);
             });
         });
@@ -213,12 +236,12 @@ window.openPrivateChat = function(friendUid, friendName, friendAvatarUrl, friend
     const chatId = [currentUser.uid, friendUid].sort().join('_');
     currentChatId = chatId;
     chatTitle.textContent = friendName;
-    chatUserAvatar.src = friendAvatarUrl;
+    chatUserAvatar.src = friendAvatarUrl || 'https://via.placeholder.com/50';
     welcomeSection.classList.add('hidden');
     reelsSection.classList.add('hidden');
     chatContent.classList.remove('hidden');
     profileSidebar.classList.remove('hidden');
-    friendAvatar.src = friendAvatarUrl;
+    friendAvatar.src = friendAvatarUrl || 'https://via.placeholder.com/50';
     friendName.textContent = friendName;
     friendGame.textContent = friendGameText ? `Jugando a ${friendGameText}` : 'En línea';
     friendJoined.textContent = friendJoinedDate;
@@ -242,7 +265,7 @@ function loadRequests() {
                 const requestItem = document.createElement('div');
                 requestItem.classList.add('request-item');
                 requestItem.innerHTML = `
-                    <img src="${friend.avatarUrl || '/default-avatar.png'}" class="friend-avatar" alt="${friend.displayName}">
+                    <img src="${friend.avatarUrl || 'https://via.placeholder.com/50'}" class="friend-avatar" alt="${friend.displayName}">
                     <span>${friend.displayName}</span>
                     <button onclick="acceptRequest('${doc.id}', '${senderUid}')">Aceptar</button>
                     <button onclick="rejectRequest('${doc.id}')">Rechazar</button>
@@ -273,7 +296,6 @@ window.closeChat = function() {
     chatContent.classList.add('hidden');
     profileSidebar.classList.add('hidden');
     welcomeSection.classList.remove('hidden');
-    // reelsSection.classList.remove('hidden'); // Descomentar si quieres mostrar reels
     messagesContainer.innerHTML = '';
     currentChatId = null;
     messageInput.value = '';
@@ -341,11 +363,15 @@ messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
 
-// Subir imagen al chat (funcionalidad original restaurada)
+// Subir imagen al chat
 attachBtn.addEventListener('click', () => attachUpload.click());
 attachUpload.addEventListener('change', async () => {
+    console.log('Subiendo imagen al chat...');
     const file = attachUpload.files[0];
-    if (!file || !currentChatId) return;
+    if (!file || !currentChatId) {
+        console.log('No hay archivo o chat seleccionado');
+        return;
+    }
     if (!file.type.startsWith('image/')) {
         alert('Por favor, selecciona un archivo de imagen.');
         attachUpload.value = '';
