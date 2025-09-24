@@ -17,22 +17,30 @@ console.log('Firebase Config:', firebaseConfig);
 // Check for missing API key
 if (!firebaseConfig.apiKey) {
     console.error('Error: VITE_FIREBASE_API_KEY is missing. Check Netlify environment variables.');
-    document.getElementById('error-msg')?.textContent == 'Error de configuración. Contacta al administrador.';
+    // FIXED: Changed == to = for assignment
+    const errorMsgElement = document.getElementById('error-msg');
+    if (errorMsgElement) {
+        errorMsgElement.textContent = 'Error de configuración. Contacta al administrador.';
+    }
     throw new Error('Missing Firebase API Key');
 }
 
 // Initialize Firebase
+let auth;
 try {
     const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
+    auth = getAuth(app); // Assign auth to the outer scope
     console.log('Firebase initialized successfully');
 } catch (error) {
     console.error('Firebase initialization failed:', error);
-    document.getElementById('error-msg')?.textContent = 'Error al conectar con Firebase. Contacta al administrador.';
+    const errorMsgElement = document.getElementById('error-msg');
+    if (errorMsgElement) {
+        errorMsgElement.textContent = 'Error al conectar con Firebase. Contacta al administrador.';
+    }
     throw error;
 }
 
-// DOM elements
+// DOM elements and event listeners
 document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const authForm = document.getElementById('auth-form');
@@ -42,8 +50,19 @@ document.addEventListener('DOMContentLoaded', () => {
     const successMsg = document.getElementById('success-msg');
 
     // Verify DOM elements exist
-    if (!loginForm || !authForm || !submitBtn || !toggleBtn || !errorMsg || !successMsg) {
-        console.error('Uno o más elementos del DOM no se encontraron. Verifica los IDs en login.html.');
+    const missingElements = [];
+    if (!loginForm) missingElements.push('login-form');
+    if (!authForm) missingElements.push('auth-form');
+    if (!submitBtn) missingElements.push('submit-btn');
+    if (!toggleBtn) missingElements.push('toggle-registro');
+    if (!errorMsg) missingElements.push('error-msg');
+    if (!successMsg) missingElements.push('success-msg');
+
+    if (missingElements.length > 0) {
+        console.error(`Error: Falta(n) el(los) siguiente(s) elemento(s) del DOM: ${missingElements.join(', ')}. Verifica los IDs en login.html.`);
+        if (errorMsg) {
+             errorMsg.textContent = 'Error de configuración del formulario. Contacta al administrador.';
+        }
         throw new Error('Elementos del DOM faltantes');
     }
 
@@ -69,6 +88,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        // Basic client-side password length check (optional but recommended)
+        if (isRegistro && password.length < 6) {
+             errorMsg.textContent = 'La contraseña debe tener al menos 6 caracteres.';
+             return;
+        }
+
+
         errorMsg.textContent = '';
         successMsg.textContent = '';
 
@@ -85,7 +111,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }, 1000);
         } catch (error) {
             console.error('Auth error:', error); // Debug
-            let errorMessage = error.message;
+            let errorMessage = 'Error de autenticación. Inténtalo de nuevo.'; // Default error message
             if (error.code === 'auth/email-already-in-use') {
                 errorMessage = 'El correo ya está registrado. Intenta con otro.';
             } else if (error.code === 'auth/invalid-email') {
@@ -94,16 +120,43 @@ document.addEventListener('DOMContentLoaded', () => {
                 errorMessage = 'La contraseña debe tener al menos 6 caracteres.';
             } else if (error.code === 'auth/invalid-credential') {
                 errorMessage = 'Correo o contraseña incorrectos.';
+            } else if (error.message) {
+                 // Fallback to Firebase error message if no specific code match
+                 errorMessage = error.message;
             }
             errorMsg.textContent = errorMessage;
         }
     });
-});
 
-// Verify authentication state
-onAuthStateChanged(auth, (user) => {
-    if (user && window.location.pathname.endsWith('login.html')) {
-        window.location.href = 'feed.html';
+    // Verify authentication state
+    // This check is done when the script loads initially.
+    // The listener below will also handle state changes.
+    if (auth.currentUser && window.location.pathname.endsWith('login.html')) {
+         window.location.href = 'feed.html';
     }
 });
 
+// Verify authentication state changes
+// This listener persists throughout the session
+onAuthStateChanged(auth, (user) => {
+    // Check if auth object was successfully initialized
+    if (typeof auth === 'undefined') {
+         console.error("Firebase Auth object not initialized for onAuthStateChanged.");
+         return; // Exit if auth is not available
+    }
+
+    if (user && window.location.pathname.endsWith('login.html')) {
+        window.location.href = 'feed.html';
+    } else if (!user && window.location.pathname.endsWith('feed.html')) {
+        // Optional: Redirect from feed.html back to login if user logs out or session expires
+        // This depends on the desired behavior for the feed page.
+        // window.location.href = 'login.html';
+    }
+}, (error) => {
+     console.error('Error during onAuthStateChanged:', error);
+     // Handle potential errors during state change observation
+     const errorMsgElement = document.getElementById('error-msg');
+     if (errorMsgElement) {
+         errorMsgElement.textContent = 'Error en la verificación de la sesión. Intenta recargar la página.';
+     }
+});
