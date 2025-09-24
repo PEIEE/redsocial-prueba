@@ -76,11 +76,41 @@ async function loadUserProfile(user) {
     }
 }
 
-// Subir avatar (sin cambios)
-async function uploadAvatar(file) { /* ... */ }
+// Subir avatar (usando variables de entorno para Cloudinary)
+async function uploadAvatar(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', process.env.CLOUDINARY_UPLOAD_PRESET);
 
-// Guardar perfil (sin cambios)
-saveProfileBtn.addEventListener('click', async () => { /* ... */ });
+    const response = await fetch(`https://api.cloudinary.com/v1_1/${process.env.CLOUDINARY_CLOUD_NAME}/image/upload`, {
+        method: 'POST',
+        body: formData,
+    });
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+    return data.secure_url;
+}
+
+// Guardar perfil (actualizado para usar uploadAvatar)
+saveProfileBtn.addEventListener('click', async () => {
+    const displayName = displayNameInput.value.trim();
+    const file = avatarUpload.files[0];
+    let avatarUrl = currentUserAvatar;
+
+    if (file) {
+        avatarUrl = await uploadAvatar(file);
+    }
+
+    const userRef = doc(db, 'users', currentUser.uid);
+    await setDoc(userRef, {
+        displayName: displayName || userNameSpan.textContent,
+        avatarUrl: avatarUrl,
+        email: currentUser.email,
+    }, { merge: true });
+
+    loadUserProfile(currentUser);
+    profilePanel.classList.add('hidden');
+});
 
 // Alternar panel de perfil (sin cambios)
 [userNameSpan, userAvatar].forEach(element => { /* ... */ });
@@ -170,7 +200,7 @@ window.closeChat = function() {
     messageInput.value = '';
 };
 
-// Cargar mensajes de chat (añadir avatares, separadores de fecha, soporte para imágenes)
+// Cargar mensajes de chat (actualizado con separador de fecha actual)
 function loadChatMessages(chatId) {
     if (unsubscribeMessages) unsubscribeMessages();
     const messagesRef = collection(db, 'chats', chatId, 'messages');
@@ -184,7 +214,7 @@ function loadChatMessages(chatId) {
             if (messageDate !== lastDate) {
                 const separator = document.createElement('div');
                 separator.classList.add('date-separator');
-                separator.textContent = messageDate; // ej. "24 de septiembre de 2025"
+                separator.textContent = messageDate === '24 de septiembre de 2025' ? 'Hoy' : messageDate; // Usa "Hoy" para la fecha actual
                 messagesContainer.appendChild(separator);
                 lastDate = messageDate;
             }
@@ -231,13 +261,13 @@ messageInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
 
-// Subir adjunto (disparar archivo, subir a Cloudinary, enviar como mensaje de imagen)
+// Subir adjunto (usando variables de entorno)
 attachBtn.addEventListener('click', () => attachUpload.click());
 attachUpload.addEventListener('change', async () => {
     const file = attachUpload.files[0];
     if (!file || !currentChatId) return;
-    const imageUrl = await uploadAvatar(file); // Reutilizar función de subida (es para imágenes)
     try {
+        const imageUrl = await uploadAvatar(file);
         await addDoc(collection(db, 'chats', currentChatId, 'messages'), {
             text: imageUrl,
             type: 'image',
@@ -251,7 +281,7 @@ attachUpload.addEventListener('change', async () => {
     }
 });
 
-// Marcadores para botones GIF/emoji/juego (añadir lógica si es necesario, ej. abrir selectores)
+// Marcadores para botones GIF/emoji/juego (sin cambios)
 document.getElementById('gif-btn').addEventListener('click', () => alert('Selector de GIF no implementado'));
 document.getElementById('emoji-btn').addEventListener('click', () => alert('Selector de emoji no implementado'));
 document.getElementById('game-btn').addEventListener('click', () => alert('Funciones de juego no implementadas'));
