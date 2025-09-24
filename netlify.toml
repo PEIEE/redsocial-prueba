@@ -1,5 +1,0 @@
-# netlify.toml
-[build]
-  command = "echo 'No build command needed for static site'"
-  publish = "."
-  functions = "functions"
