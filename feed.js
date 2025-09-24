@@ -12,13 +12,13 @@ const firebaseConfig = {
     messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
     appId: process.env.FIREBASE_APP_ID
 };
-console.log('Firebase Config:', firebaseConfig); // Para verificar si las variables se cargan
+console.log('Firebase Config:', firebaseConfig);
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
 let currentUser = null;
-let currentUserAvatar = '/default-avatar.png'; // Ruta ajustada
+let currentUserAvatar = '/default-avatar.png';
 let currentChatId = null;
 let unsubscribeMessages = null;
 let unsubscribeFriends = null;
@@ -28,10 +28,6 @@ let unsubscribeRequests = null;
 const logoutBtn = document.getElementById('logout-btn');
 const userNameSpan = document.getElementById('user-name');
 const userAvatar = document.getElementById('user-avatar');
-const profilePanel = document.getElementById('profile-panel');
-const displayNameInput = document.getElementById('display-name');
-const avatarUpload = document.getElementById('avatar-upload');
-const saveProfileBtn = document.getElementById('save-profile');
 const chatContent = document.getElementById('chat-content');
 const chatTitle = document.getElementById('chat-title');
 const chatUserAvatar = document.getElementById('chat-user-avatar');
@@ -86,7 +82,6 @@ async function loadUserProfile(user) {
         userNameSpan.textContent = data.displayName || user.email.split('@')[0] || 'Usuario';
         userAvatar.src = data.avatarUrl || '/default-avatar.png';
         currentUserAvatar = userAvatar.src;
-        displayNameInput.value = data.displayName || '';
         console.log('Perfil cargado:', { displayName: userNameSpan.textContent, avatarUrl: userAvatar.src });
     } else {
         userNameSpan.textContent = user.email.split('@')[0] || 'Usuario';
@@ -115,44 +110,6 @@ async function uploadAvatar(file) {
     console.log('Avatar subido con éxito:', data.secure_url);
     return data.secure_url;
 }
-
-// Guardar perfil
-saveProfileBtn.addEventListener('click', async () => {
-    console.log('Guardando perfil...');
-    const displayName = displayNameInput.value.trim();
-    const file = avatarUpload.files[0];
-    let avatarUrl = currentUserAvatar;
-
-    if (file) {
-        try {
-            avatarUrl = await uploadAvatar(file);
-        } catch (error) {
-            console.error('Error al subir el avatar:', error.message);
-            alert('Error al subir el avatar: ' + error.message);
-            return;
-        }
-    }
-
-    const userRef = doc(db, 'users', currentUser.uid);
-    try {
-        await setDoc(userRef, {
-            displayName: displayName || userNameSpan.textContent,
-            avatarUrl: avatarUrl,
-            email: currentUser.email,
-        }, { merge: true });
-        console.log('Perfil guardado con éxito');
-        loadUserProfile(currentUser);
-    } catch (error) {
-        console.error('Error al guardar en Firebase:', error);
-        alert('Error al guardar el perfil: ' + error.message);
-    }
-    profilePanel.classList.add('hidden');
-});
-
-// Alternar panel de perfil
-[userNameSpan, userAvatar].forEach(element => {
-    element.addEventListener('click', () => profilePanel.classList.remove('hidden'));
-});
 
 // Búsqueda de usuarios
 userSearch.addEventListener('input', async (e) => {
@@ -192,32 +149,44 @@ window.addFriend = async function(receiverUid) {
 function loadFriends() {
     if (unsubscribeFriends) unsubscribeFriends();
     const friendshipsRef = collection(db, 'friendships');
-    const q = query(friendshipsRef, where('userUid1', '==', currentUser.uid));
-    unsubscribeFriends = onSnapshot(q, (snapshot) => {
-        friendsList.innerHTML = '';
-        snapshot.forEach((doc) => {
-            const friendship = doc.data();
-            const friendUid = friendship.userUid1 === currentUser.uid ? friendship.userUid2 : friendship.userUid1;
-            loadFriendProfile(friendUid, (friend) => {
-                friend.status = 'online'; // Ficticio
-                friend.game = 'Papers, Please'; // Ficticio
-                friend.joined = '21 octubre 2020'; // Ficticio
+    const q = query(friendshipsRef, where('status', '==', 'accepted'), where('userUid1', '==', currentUser.uid));
+    const q2 = query(friendshipsRef, where('status', '==', 'accepted'), where('userUid2', '==', currentUser.uid));
+    friendsList.innerHTML = '';
+    const friendUids = new Set();
 
+    const processFriend = (friendUid, friendData) => {
+        if (!friendUids.has(friendUid)) {
+            friendUids.add(friendUid);
+            loadFriendProfile(friendUid, (friend) => {
                 const friendItem = document.createElement('div');
                 friendItem.classList.add('friend-item');
                 friendItem.innerHTML = `
                     <div class="avatar-wrapper">
-                        <img src="${friend.avatarUrl || '/default-avatar.png'}" alt="${friend.displayName}" class="friend-avatar">
-                        <div class="status-dot ${friend.status}"></div>
+                        <img src="${friend.avatarUrl || '/default-avatar.png'}" class="friend-avatar" alt="${friend.displayName}">
+                        <span class="status-dot online"></span>
                     </div>
                     <div class="friend-info">
                         <span class="friend-name">${friend.displayName}</span>
-                        <span class="friend-status">${friend.game ? `Jugando a ${friend.game}` : friend.status.charAt(0).toUpperCase() + friend.status.slice(1)}</span>
+                        <span class="friend-status">${friend.status || 'En línea'}</span>
                     </div>
                 `;
                 friendItem.onclick = () => openPrivateChat(friendUid, friend.displayName, friend.avatarUrl || '/default-avatar.png', friend.game, friend.joined);
                 friendsList.appendChild(friendItem);
             });
+        }
+    };
+
+    unsubscribeFriends = onSnapshot(q, (snapshot) => {
+        snapshot.forEach((doc) => {
+            const friendData = doc.data();
+            processFriend(friendData.userUid2, friendData);
+        });
+    });
+
+    unsubscribeFriends = onSnapshot(q2, (snapshot) => {
+        snapshot.forEach((doc) => {
+            const friendData = doc.data();
+            processFriend(friendData.userUid1, friendData);
         });
     });
 }
@@ -296,7 +265,6 @@ window.closeChat = function() {
     chatContent.classList.add('hidden');
     profileSidebar.classList.add('hidden');
     welcomeSection.classList.remove('hidden');
-    // reelsSection.classList.remove('hidden'); // Descomentar si quieres mostrar reels
     messagesContainer.innerHTML = '';
     currentChatId = null;
     messageInput.value = '';
